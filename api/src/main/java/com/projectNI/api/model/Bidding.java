@@ -25,17 +25,18 @@ public class Bidding {
     private String description;
 
     @Column(nullable = false)
+    private String productBidding;
+
+    @Column(nullable = false)
     private int quantity;
 
     @Column
     private String category;
 
-    /**
-     * Preço máximo desejado por unidade.
-     * Usamos BigDecimal para precisão monetária, evitando erros de arredondamento.
-     */
-    @Column(name = "max_price_per_unit")
-    private BigDecimal maxPricePerUnit;
+    /*
+        Preço máximo desejado por unidade.
+        Usamos BigDecimal para precisão monetária, evitando erros de arredondamento.
+    */
 
     @Column(nullable = false)
     private LocalDateTime requestDate;

@@ -3,6 +3,7 @@ package com.projectNI.api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Table(name="product")
@@ -27,6 +28,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idSupplier", nullable = false)
     private Supplier supplier;
+
+    @Column(nullable = false)
+    private BigDecimal pricePerUnit;
 
     @Column(nullable = false)
     private String description;
