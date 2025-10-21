@@ -21,6 +21,9 @@ public class Bidding {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idBidding;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
