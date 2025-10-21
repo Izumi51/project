@@ -40,7 +40,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
             return JWT.require(algorithm)
-                    .withIssuer("doAi")
+                    .withIssuer("projectNI")
                     .build()
                     .verify(token)
                     .getSubject();
