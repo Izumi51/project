@@ -20,9 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
-    private CustomUserDetailsService userDetailsService;
-
-    @Autowired
     SecurityFilter securityFilter;
 
     @Autowired
@@ -44,13 +41,6 @@ public class SecurityConfig {
                         // Public product endpoints
                         .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/{id}").permitAll()
-                        // Swagger/OpenAPI endpoints
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/v3/api-docs").permitAll()
-                        .requestMatchers("/swagger-resources/**").permitAll()
-                        .requestMatchers("/webjars/**").permitAll()
                         // Protected product endpoints
                         .requestMatchers(HttpMethod.GET, "/api/products/created-by/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/products/processing-by/**").authenticated()

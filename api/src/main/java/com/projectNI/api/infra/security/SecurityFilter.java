@@ -52,7 +52,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                 }
             } catch (Exception e) {
                 System.err.println("Error validating token: " + e.getMessage());
-                e.printStackTrace();
             }
         } else {
             System.out.println("SecurityFilter - No token found in request");
