@@ -24,7 +24,7 @@ public class Bidding {
     // User who created the product
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
-    private User createdBy;
+    private User user;
 
     @Column(nullable = false)
     private String name;

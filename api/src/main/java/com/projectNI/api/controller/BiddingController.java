@@ -35,9 +35,9 @@ public class BiddingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BiddingResponseDTO>> getAllBiddings() {
-        List<BiddingResponseDTO> biddings = biddingService.getAllBiddings();
-        return ResponseEntity.ok(biddings);
+    public ResponseEntity<List<BiddingResponseDTO>> getAllBindings() {
+        List<BiddingResponseDTO> bindings = biddingService.getAllBindings();
+        return ResponseEntity.ok(bindings);
     }
 
     @GetMapping("/{id}")

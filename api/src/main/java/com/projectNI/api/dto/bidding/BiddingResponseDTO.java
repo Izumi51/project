@@ -13,6 +13,8 @@ public record BiddingResponseDTO(
     int quantity,
     String category,
     LocalDateTime requestDate,
-    BiddingStatus biddingStatus
+    BiddingStatus biddingStatus,
+    UUID userId,
+    String userName
 ) {
 }
