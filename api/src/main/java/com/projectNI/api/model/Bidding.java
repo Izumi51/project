@@ -14,12 +14,17 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "idBidding")
 public class Bidding {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idBidding;
+
+    // User who created the product
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_user_id", nullable = false)
+    private User createdBy;
 
     @Column(nullable = false)
     private String name;
