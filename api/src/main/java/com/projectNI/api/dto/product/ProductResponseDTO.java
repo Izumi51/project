@@ -13,4 +13,5 @@ public record ProductResponseDTO(
         ProductStatus productStatus,
         UUID supplierId,
         String supplierName
-) {}
+) {
+}

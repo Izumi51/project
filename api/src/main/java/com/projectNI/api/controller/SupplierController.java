@@ -26,11 +26,11 @@ public class SupplierController {
 
     @PostMapping
     public ResponseEntity<SupplierResponseDTO> createSupplier(
-            @RequestBody SupplierRequestDTO supplierRequestDTO,
-            @RequestParam(name = "userId", required = false) UUID userId) {
+            @RequestBody SupplierRequestDTO supplierRequestDTO
+    ) {
 
         SupplierResponseDTO createdSupplier;
-        createdSupplier = supplierService.createSupplier(supplierRequestDTO, userId);
+        createdSupplier = supplierService.createSupplier(supplierRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdSupplier);
     }
 

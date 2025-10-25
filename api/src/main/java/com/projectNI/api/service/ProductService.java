@@ -28,12 +28,6 @@ public class ProductService {
         this.supplierRepository = supplierRepository;
     }
 
-    /*
-     * Note que mudei a assinatura. O controlador passava "userId",
-     * mas a entidade Product precisa de um "supplierId", que estou pegando do DTO.
-     * Você precisará ajustar seu `ProductController` para não passar o `userId`
-     * e garantir que o `supplierId` venha no `ProductRequestDTO`.
-     */
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO dto) {
         // Finds the Supplier

@@ -1,4 +1,15 @@
 package com.projectNI.api.dto.supplier;
 
-public record SupplierResponseDTO() {
+import com.projectNI.api.model.SupplierStatus;
+import java.util.UUID;
+
+public record SupplierResponseDTO(
+        UUID idSupplier,
+        String companyName,
+        String cnpj,
+        String contactName,
+        String phone,
+        String email,
+        SupplierStatus supplierStatus
+) {
 }

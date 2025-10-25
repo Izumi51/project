@@ -11,4 +11,5 @@ public record ProductRequestDTO(
         BigDecimal pricePerUnit,
         String description,
         ProductStatus productStatus
-) {}
+) {
+}
