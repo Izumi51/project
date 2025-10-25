@@ -32,21 +32,38 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Auth endpoints
+                        // Auth endpoints - Permitted for everyone
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/otp/request").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/otp/verify").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/password/reset").permitAll()
-                        // Public product endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/{id}").permitAll()
-                        // Protected product endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/products/created-by/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/products/processing-by/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/products").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
+                        // Keep these commented out in controller, in case you enable them later
+//                        .requestMatchers(HttpMethod.POST, "/api/auth/otp/request").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/auth/otp/verify").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/auth/password/reset").permitAll()
+                        // --- Product Endpoints ---
+                        // Allow reading products without authentication
+                        .requestMatchers(HttpMethod.GET, "/api/product").permitAll() // Corrected path
+                        .requestMatchers(HttpMethod.GET, "/api/product/{id}").permitAll() // Corrected path
+                        // Require authentication for modifying products
+                        .requestMatchers(HttpMethod.POST, "/api/product").authenticated() // Corrected path
+                        .requestMatchers(HttpMethod.PUT, "/api/product/{id}").authenticated() // Corrected path pattern
+                        .requestMatchers(HttpMethod.PUT, "/api/product/{id}/status").authenticated() // Corrected path pattern
+                        .requestMatchers(HttpMethod.DELETE, "/api/product/{id}").authenticated() // Corrected path pattern
+                        // --- Bidding Endpoints ---
+                        // Example: Allow reading biddings publicly, require auth for changes
+                        .requestMatchers(HttpMethod.GET, "/api/bidding").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/bidding/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/bidding").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/bidding/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/bidding/{id}/status").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/bidding/{id}").authenticated()
+                        // --- Supplier Endpoints ---
+                        // Example: Allow reading suppliers publicly, require auth for changes
+                        .requestMatchers(HttpMethod.GET, "/api/supplier").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/supplier/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/supplier").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/supplier/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/supplier/{id}/status").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/supplier/{id}").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
