@@ -50,7 +50,7 @@ public class BiddingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BiddingResponseDTO> getAllBindings() {
+    public List<BiddingResponseDTO> getAllBiddings() {
         return biddingRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
