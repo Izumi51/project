@@ -1,4 +1,18 @@
 package com.projectNI.api.dto.bidding;
 
-public record BiddingResponseDTO() {
+import com.projectNI.api.model.BiddingStatus;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record BiddingResponseDTO(
+    UUID idBidding,
+    String name,
+    String description,
+    String productBidding,
+    int quantity,
+    String category,
+    LocalDateTime requestDate,
+    BiddingStatus biddingStatus
+) {
 }
