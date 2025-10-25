@@ -1,4 +1,5 @@
 package com.projectNI.api.dto.product;
 
-public record ProductStatusUpdateDTO() {
-}
+import com.projectNI.api.model.ProductStatus;
+
+public record ProductStatusUpdateDTO(ProductStatus status) {}

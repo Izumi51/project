@@ -29,7 +29,7 @@ public class ProductController {
             @RequestParam(name = "userId", required = false) UUID userId) {
 
         ProductResponseDTO createdProduct;
-        createdProduct = productService.createProduct(productRequestDTO, userId);
+        createdProduct = productService.createProduct(productRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
