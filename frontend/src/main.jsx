@@ -1,13 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AppProviders } from './context/AppProvider.jsx'
 import { createBrowserRouter, RouterProvider} from 'react-router'
+
 //Components
+import AppProviders from './context/AppProvider.jsx'
 import MainLayout from './components/MainLayout.jsx';
-import { ProtectedRoutes } from './components/ProtectedRoutes.jsx';
+import ProtectedRoutes from './components/ProtectedRoutes.jsx';
+
 //Pages
-// import Home from './pages/Home.jsx';
-// import Login from './pages/Login.jsx';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
 // import Register from './pages/Register.jsx';
 // import ForgotPassword from './pages/ForgotPassword.jsx';
 // import Donations from './pages/Donations.jsx';
@@ -22,7 +24,7 @@ const router = createBrowserRouter([
 		// Rota "Pai": Todas as rotas abaixo usarão este layout
 		path: "/",
 		element: <MainLayout />, // <-- Layout principal
-		errorElement: <NotFound />, // <-- Página de erro para qualquer rota
+		//errorElement: <NotFound />, // <-- Página de erro para qualquer rota
 		children: [
 			// --- ROTAS PÚBLICAS ---
 			{
@@ -35,56 +37,46 @@ const router = createBrowserRouter([
 				element: <Login />,
 			},
 
-			{
-				path: "/register",
-				element: <Register />,
-			},
+			// {
+			// 	path: "/register",
+			// 	element: <Register />,
+			// },
 
-			{
-				path: "/forgot-password",
-				element: <ForgotPassword />,
-			},
+			// {
+			// 	path: "/forgot-password",
+			// 	element: <ForgotPassword />,
+			// },
 
-			{
-				path: "/donations",
-				element: <Donations />,
-			},
+			// {
+			// 	path: "/products/:id",
+			// 	element: <ProductDetails />,
+			// },
 
-			{
-				path: "/products/:id",
-				element: <ProductDetails />,
-			},
+			// // --- ROTAS PROTEGIDAS ---
+			// {
+			// 	element: <ProtectedRoutes />, // <-- O "Segurança"
+			// 	children: [
+			// 		// Todas as rotas aqui dentro exigirão login
+			// 		{
+			// 			path: "/profile",
+			// 			element: <User />,
+			// 		},
 
-			{
-				path: "/demo",
-				element: <OtpDemo />,
-			},
-
-			// --- ROTAS PROTEGIDAS ---
-			{
-				element: <ProtectedRoutes />, // <-- O "Segurança"
-				children: [
-					// Todas as rotas aqui dentro exigirão login
-					{
-						path: "/profile",
-						element: <User />,
-					},
-
-					{
-						path: "/donate",
-						element: <Donate />,
-					},
-					// Adicione outras rotas que precisam de login aqui
-					// ex: { path: "/minha-conta", element: <Account /> }
-				],
-			},
+			// 		{
+			// 			path: "/donate",
+			// 			element: <Donate />,
+			// 		},
+			// 		// Adicione outras rotas que precisam de login aqui
+			// 		// ex: { path: "/minha-conta", element: <Account /> }
+			// 	],
+			// },
 		],
 	},
 
 	{ 
-		// Rota Not Found (pode ser colocada dentro do layout principal também)
-		path: "*", 
-		element: <NotFound /> 
+		// // Rota Not Found (pode ser colocada dentro do layout principal também)
+		// path: "*", 
+		// element: <NotFound /> 
 	}
 ]);
 

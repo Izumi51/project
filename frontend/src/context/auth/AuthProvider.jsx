@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AuthContext from './AuthContext';
-import api from '../api/axios';
+import api from '../../api/axios';
 
 const AuthProvider = ({ children }) => {
     // A inicialização do estado a partir do localStorage já acontece aqui

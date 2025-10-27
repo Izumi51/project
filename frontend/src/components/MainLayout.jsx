@@ -1,8 +1,8 @@
-import { Outlet, ScrollRestoration } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router';
 
 // Importe seus componentes de layout
-import Navbar from './Navbar'; 
-import Footer from './Footer';
+import Navbar from './nav/Navbar'; 
+import Footer from './footer/Footer';
 
 const MainLayout = () => {
     return (

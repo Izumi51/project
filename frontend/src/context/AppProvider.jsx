@@ -1,9 +1,9 @@
-import { AuthProvider } from './auth/AuthContext';
-import { ProductProvider } from './product/ProductContext';
-import { SupplierProvider } from './product/ProductContext';
-import { BiddingProvider } from './bidding/BiddingContext';
+import AuthProvider from './auth/AuthProvider';
+import ProductProvider from './product/ProductProvider';
+import SupplierProvider from './supplier/SupplierProvider';
+import BiddingProvider from './bidding/BiddingProvider';
 
-export const AppProviders = ({ children }) => {
+const AppProviders = ({ children }) => {
     return (
         <AuthProvider>
             <BiddingProvider>
@@ -16,3 +16,5 @@ export const AppProviders = ({ children }) => {
         </AuthProvider>
     );
 };
+
+export default AppProviders;
