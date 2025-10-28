@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider} from 'react-router'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 
 //Components
 import AppProviders from './context/AppProvider.jsx'
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
 		],
 	},
 
-	{ 
+	{
 		// // Rota Not Found (pode ser colocada dentro do layout principal também)
 		// path: "*", 
 		// element: <NotFound /> 
@@ -83,7 +83,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
 		<AppProviders>
-			<RouterProvider router={ router } />
+			<RouterProvider router={router} />
 		</AppProviders>
 	</StrictMode>,
 )

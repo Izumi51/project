@@ -7,26 +7,26 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
     // Skip adding token for public endpoints
-    const isPublicProductEndpoint = config.url === '/products' || 
-                                   (config.url.startsWith('/products/') && 
-                                    config.url.match(/^\/products\/\d+$/) && 
-                                    config.method.toLowerCase() === 'get');
-    
+    const isPublicProductEndpoint = config.url === '/products' ||
+        (config.url.startsWith('/products/') &&
+            config.url.match(/^\/products\/\d+$/) &&
+            config.method.toLowerCase() === 'get');
+
     // Skip adding token for all auth endpoints (login, register, OTP, password reset)
     const isAuthEndpoint = config.url.startsWith('/auth/');
-    
-    if(isPublicProductEndpoint || isAuthEndpoint) {
+
+    if (isPublicProductEndpoint || isAuthEndpoint) {
         return config;
     }
 
     const token = localStorage.getItem('token');
 
-    if(token) {
+    if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
-},(error) => {
+}, (error) => {
     return Promise.reject(error);
 });
 

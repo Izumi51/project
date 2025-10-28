@@ -6,13 +6,13 @@ import BiddingProvider from './bidding/BiddingProvider';
 const AppProviders = ({ children }) => {
     return (
         <AuthProvider>
-            <BiddingProvider>
+             <BiddingProvider>
                 <SupplierProvider>
                     <ProductProvider>
                         {children}
                     </ProductProvider>
-                </SupplierProvider>
-            </BiddingProvider>
+                </SupplierProvider> 
+            </BiddingProvider> 
         </AuthProvider>
     );
 };

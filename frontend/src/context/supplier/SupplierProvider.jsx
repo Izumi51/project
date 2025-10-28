@@ -1,7 +1,9 @@
+import SupplierContext from './SupplierContext'
+
 const SupplierProvider = ({ children }) => {
 
     return (
-        <SupplierContext.Provider value={{ }}>
+        <SupplierContext.Provider value={{ null:null }}>
             {children}
         </SupplierContext.Provider>
     );

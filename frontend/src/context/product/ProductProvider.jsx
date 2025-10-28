@@ -1,7 +1,9 @@
+import ProductContext from './ProductContext'
+
 const ProductProvider = ({ children }) => {
 
     return (
-        <ProductContext.Provider value={{ }}>
+        <ProductContext.Provider value={{ null:null }}>
             {children}
         </ProductContext.Provider>
     );
