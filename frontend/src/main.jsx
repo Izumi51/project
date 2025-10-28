@@ -10,25 +10,27 @@ import ProtectedRoutes from './components/ProtectedRoutes.jsx';
 //Pages
 import Home from './pages/Home.jsx';
 import Login from './pages/Login.jsx';
+import Bidding from './pages/Bidding.jsx'
+import Product from './pages/Product.jsx'
+import Supplier from './pages/Supplier.jsx'
+import Match from './pages/Match.jsx'
+import NotFound from './pages/Notfound.jsx';
 // import Register from './pages/Register.jsx';
 // import ForgotPassword from './pages/ForgotPassword.jsx';
-// import Donations from './pages/Donations.jsx';
-// import Donate from './pages/Donate.jsx';
 // import ProductDetails from './pages/ProductDetails.jsx';
 // import User from './pages/User.jsx'; // (Profile)
 // import OtpDemo from './pages/OtpDemo.jsx';
-// import NotFound from './pages/NotFound.jsx';
 
 const router = createBrowserRouter([
 	{
 		// Rota "Pai": Todas as rotas abaixo usarão este layout
 		path: "/",
 		element: <MainLayout />, // <-- Layout principal
-		//errorElement: <NotFound />, // <-- Página de erro para qualquer rota
+		errorElement: <NotFound />, // <-- Página de erro para qualquer rota
 		children: [
 			// --- ROTAS PÚBLICAS ---
 			{
-				index: true, // index: true significa que esta é a rota para o path: "/"
+				index: true, // path: "/"
 				element: <Home />,
 			},
 
@@ -52,31 +54,43 @@ const router = createBrowserRouter([
 			// 	element: <ProductDetails />,
 			// },
 
-			// // --- ROTAS PROTEGIDAS ---
-			// {
-			// 	element: <ProtectedRoutes />, // <-- O "Segurança"
-			// 	children: [
-			// 		// Todas as rotas aqui dentro exigirão login
-			// 		{
-			// 			path: "/profile",
-			// 			element: <User />,
-			// 		},
+			// --- ROTAS PROTEGIDAS ---
+			{
+				element: <ProtectedRoutes />, // <-- O "Segurança"
+				children: [
+					// Todas as rotas aqui dentro exigirão login
+					// {
+					// 	path: "/profile",
+					// 	element: <User />,
+					// },
 
-			// 		{
-			// 			path: "/donate",
-			// 			element: <Donate />,
-			// 		},
-			// 		// Adicione outras rotas que precisam de login aqui
-			// 		// ex: { path: "/minha-conta", element: <Account /> }
-			// 	],
-			// },
+					{
+						path: "/supplier",
+						element: <Supplier />,
+					},
+
+					{
+						path: "/product",
+						element: <Product />,
+					},
+
+					{
+						path: "/bidding",
+						element: <Bidding />,
+					},
+
+					{
+						path: "/match",
+						element: <Match />,
+					},
+				],
+			},
 		],
 	},
 
 	{
-		// // Rota Not Found (pode ser colocada dentro do layout principal também)
-		// path: "*", 
-		// element: <NotFound /> 
+		path: "*", 
+		element: <NotFound /> 
 	}
 ]);
 
