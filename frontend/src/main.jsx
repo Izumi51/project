@@ -23,12 +23,11 @@ import NotFound from './pages/Notfound.jsx';
 
 const router = createBrowserRouter([
 	{
-		// Rota "Pai": Todas as rotas abaixo usarão este layout
 		path: "/",
-		element: <MainLayout />, // <-- Layout principal
-		errorElement: <NotFound />, // <-- Página de erro para qualquer rota
+		element: <MainLayout />, // <-- Main Layout
+		errorElement: <NotFound />, // <-- Error Page for all routes
 		children: [
-			// --- ROTAS PÚBLICAS ---
+			// --- Public Routes ---
 			{
 				index: true, // path: "/"
 				element: <Home />,
@@ -54,11 +53,11 @@ const router = createBrowserRouter([
 			// 	element: <ProductDetails />,
 			// },
 
-			// --- ROTAS PROTEGIDAS ---
+			// --- Protected Routes ---
+			// --- All routes here will need to be looged ---
 			{
-				element: <ProtectedRoutes />, // <-- O "Segurança"
+				element: <ProtectedRoutes />,
 				children: [
-					// Todas as rotas aqui dentro exigirão login
 					// {
 					// 	path: "/profile",
 					// 	element: <User />,

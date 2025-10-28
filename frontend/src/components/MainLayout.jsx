@@ -4,22 +4,22 @@ import NavBar from './nav/Navbar';
 import Footer from './footer/Footer';
 
 const MainLayout = () => {
-  return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 flex">
-      <ScrollRestoration />
+	return (
+		<section className="min-h-screen bg-[#EEEEEE] flex">
+			<ScrollRestoration />
 
-      {/* Sidebar fixa */}
-      <NavBar />
+			<NavBar />
 
-      {/* Conteúdo principal */}
-      <div className="flex-1 ml-60 flex flex-col min-h-screen">
-        <main className="flex-1 p-6 text-black dark:text-white bg-gray-50">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </div>
-  );
+			<section className="flex-1 ml-60 flex flex-col min-h-screen">
+
+				<main className="flex-1 p-6 text-gray-900">
+					<Outlet />
+				</main>
+
+				<Footer />
+			</section>
+		</section>
+	);
 };
 
 export default MainLayout;
