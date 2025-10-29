@@ -378,7 +378,7 @@ const Product = () => {
 					  'transform', 'transition-all', 'duration-300', 'ease-out', 'scale-95', 'opacity-0', 'animate-fade-in-scale'
 					  O modal agora aparecerá instantaneamente.
 					*/}
-					<div className="bg-[#FFFFFF] p-6 rounded-lg shadow-xl w-full max-w-2xl border border-[#CBCBCB]">
+					<div className="bg-[#FFFFFF] p-6 rounded-lg shadow-xl w-full max-w-4xl border border-[#CBCBCB]">
 						
 						{/* Modal Header */}
 						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
@@ -435,7 +435,7 @@ const Product = () => {
 									<label className="block text-sm font-medium text-gray-700 mb-2">
 										Price Tiers <span className="text-red-500">*</span>
 									</label>
-									<div className="space-y-2 max-h-48 overflow-y-auto pr-2 border border-[#EEEEEE] rounded-md p-3">
+									<div className="space-y-2 max-h-96 overflow-y-auto pr-2 border border-[#EEEEEE] rounded-md p-3">
 										{formData.priceTiers.map((tier, index) => (
 											<PriceTierRow
 												key={index}
