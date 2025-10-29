@@ -45,18 +45,27 @@ public class MatchService {
                 productKeyword
         );
 
+
+
         // 3. Calculate the total cost for each product and create DTOs
         List<MatchResponseDTO> results = matchedProducts.stream()
                 .map(product -> {
                     Supplier supplier = product.getSupplier();
-                    BigDecimal totalCost = product.getPricePerUnit().multiply(BigDecimal.valueOf(quantity));
+
+                    // --- MODIFIED LOGIC HERE ---
+                    // Instead of getting the fixed price, we calculate the price
+                    // based on the bidding quantity.
+                    BigDecimal effectivePricePerUnit = product.getPriceForQuantity(quantity);
+
+                    // The total cost now uses the effective price
+                    BigDecimal totalCost = effectivePricePerUnit.multiply(BigDecimal.valueOf(quantity));
 
                     return new MatchResponseDTO(
                             product.getIdProduct(),
                             product.getName(),
                             supplier.getIdSupplier(),
                             supplier.getCompanyName(),
-                            product.getPricePerUnit(),
+                            effectivePricePerUnit,
                             quantity,
                             totalCost
                     );
