@@ -61,33 +61,33 @@ const Home = () => {
 			{/* Header */}
 			<div className="mb-8 pb-4 border-b border-[#CBCBCB]">
 				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">Dashboard</h1>
-				<p className="text-gray-500 mt-1">Overview of your procurement activities.</p>
+				<p className="text-gray-500 mt-1">Visão geral das suas atividades.</p>
 			</div>
 
 			{/* Display error, if any */}
 			{fetchError && !isLoading && (
-				<div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center" role="alert">
-					Error loading dashboard data: {fetchError}
+				<div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center" role="alert">	
+					Erro ao carregar os dados do painel: {fetchError}
 				</div>
 			)}
 
 			{/* Summary Cards Grid */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 				<DashboardCard
-					title="Total Biddings"
+					title="Total de Licitações"
 					value={biddings.length}
 					linkTo="/bidding"
 					isLoading={isLoading}
 				/>
 				<DashboardCard
-					title="Total Products"
+					title="Total de Produtos"
 					value={products.length}
 					linkTo="/product"
 					bgColor="bg-[#B7B89F]"
 					isLoading={isLoading}
 				/>
 				<DashboardCard
-					title="Total Suppliers"
+					title="Total de Fornecedores"
 					value={suppliers.length}
 					linkTo="/supplier"
 					bgColor="bg-gray-500"
@@ -98,7 +98,7 @@ const Home = () => {
 			{/* Recent Biddings Section */}
 			<div className="bg-white shadow-md rounded-lg border border-gray-200">
 				<div className="p-5 border-b border-gray-200">
-					<h2 className="text-xl font-semibold text-gray-800">Recent Biddings</h2>
+					<h2 className="text-xl font-semibold text-gray-800">Licitações Recentes</h2>
 				</div>
 				<div className="p-3">
 					{isLoading ? (
@@ -119,12 +119,12 @@ const Home = () => {
 							))}
 						</div>
 					) : (
-						<p className="text-center text-gray-500 py-6">No recent biddings found.</p>
+						<p className="text-center text-gray-500 py-6">Não foram encontrados lances recentes.</p>
 					)}
 				</div>
 				<div className="p-4 bg-gray-50 border-t border-gray-200 text-right">
 					<Link to="/bidding" className="text-sm font-medium text-[#777C6D] hover:text-[#5f6356] hover:underline">
-						View All Biddings &rarr;
+						Veja Todas as Licitações &rarr;
 					</Link>
 				</div>
 			</div>

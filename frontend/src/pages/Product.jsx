@@ -83,17 +83,17 @@ const TextAreaField = ({ label, name, value, onChange, rows = 3, ...props }) => 
 const PriceTierRow = ({ tier, index, onChange, onRemove, canRemove }) => (
 	<div className="flex items-end space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-md mb-2 shadow-sm">
 		<InputField
-			label="Min. Qty"
+			label="Quatidade Mínima"
 			type="number"
 			name="minQuantity"
 			value={tier.minQuantity}
 			onChange={(e) => onChange(index, e)}
 			required
 			min="1"
-			placeholder="e.g., 1"
+			placeholder="ex.: 1"
 		/>
 		<InputField
-			label="Price/Unit (R$)"
+			label="Preço por Unidade (R$)"
 			type="number"
 			name="pricePerUnit"
 			value={tier.pricePerUnit}
@@ -101,7 +101,7 @@ const PriceTierRow = ({ tier, index, onChange, onRemove, canRemove }) => (
 			required
 			min="0.01"
 			step="0.01"
-			placeholder="e.g., 10.00"
+			placeholder="ex.: 10.00"
 		/>
 		<button
 			type="button"
@@ -242,12 +242,12 @@ const Product = () => {
 		setApiError(null);
 
 		// Validation
-		if (!formData.supplierId) return setApiError('Supplier is required.');
-		if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('At least one price tier is required.');
-		if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('Minimum quantity must be 1 or greater.');
-		if (!formData.priceTiers.some(t => t.minQuantity === 1)) return setApiError('A price tier for minimum quantity 1 is required.');
+		if (!formData.supplierId) return setApiError('Forncedor é Obrigatório');
+		if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('Pelo Menos um Preço é Obrigatório.');
+		if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('A Quantidade Mínima é 1 ou mais.');
+		if (!formData.priceTiers.some(t => t.minQuantity === 1)) return setApiError('Um Preço para a Quantidade Mínima 1 é Obrigatório.');
 		const quantities = formData.priceTiers.map(t => t.minQuantity);
-        if (new Set(quantities).size !== quantities.length) return setApiError('Minimum quantities for tiers must be unique.');
+        if (new Set(quantities).size !== quantities.length) return setApiError('Quantidades Mínimas para os Preços devem ser Únicas.');
 
 		// Prepare data (ensure numbers are numbers) - already handled by handleTierChange
 		const submissionData = {
@@ -280,13 +280,13 @@ const Product = () => {
 
 	// Loading and Error States
 	if (isLoading) return <div className="text-center p-10 text-gray-600">Loading data...</div>;
-	if (fetchError && !isLoading) return <div className="text-red-600 text-center p-10">Error loading data: {fetchError}</div>;
+	if (fetchError && !isLoading) return <div className="text-red-600 text-center p-10">Erro carregando dados: {fetchError}</div>;
 
 	return (
 		<div className="container mx-auto p-4 md:p-6">
 			{/* Page Header */}
 			<div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
-				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Products</h1>
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">Meus Produtos</h1>
 				<button
 					onClick={handleAddNew}
 					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out flex items-center space-x-1"
@@ -294,7 +294,7 @@ const Product = () => {
 					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
   						<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 					</svg>
-					<span>New Product</span>
+					<span>Novo Produto</span>
 				</button>
 			</div>
 
@@ -311,18 +311,18 @@ const Product = () => {
 				<table className="min-w-full divide-y divide-[#EEEEEE]">
 					<thead className="bg-gray-50">
 						<tr>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Product Name</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Category</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Base Price (R$)</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Supplier</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Nome do Produto</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Categoria</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Preço Base(R$)</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Fornecedor</th>
 							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Status</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Actions</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Ações</th>
 						</tr>
 					</thead>
 					<tbody className="bg-white divide-y divide-[#EEEEEE]">
 						{products.length === 0 ? (
 							<tr>
-								<td colSpan="6" className="text-center py-6 text-gray-500">No products found. Add one to get started!</td>
+								<td colSpan="6" className="text-center py-6 text-gray-500">Nenhum Produto Encontrado</td>
 							</tr>
 						) : (
 							products.map(product => {
@@ -335,11 +335,11 @@ const Product = () => {
 										<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{product.supplierName}</td>
 										<td className="py-4 px-4 whitespace-nowrap text-sm">
 											<SelectField
-												name={`status-${product.idProduct}`} // Unique name for each row's select
+												name={`status-${product.idProduct}`}
 												value={product.productStatus}
 												onChange={(e) => handleStatusChange(product.idProduct, e.target.value)}
 												options={statusSelectOptions}
-												className="text-xs p-1 rounded border border-[#CBCBCB] w-full" // Removed mt-1, adjusted class
+												className="text-xs p-1 rounded border border-[#CBCBCB] w-full"
 												aria-label={`Status for ${product.name}`}
 											/>
 										</td>
@@ -349,14 +349,14 @@ const Product = () => {
 												className="text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out"
 												aria-label={`Edit ${product.name}`}
 											>
-												Edit
+												Editar
 											</button>
 											<button
 												onClick={() => handleDelete(product.idProduct)}
 												className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
 												aria-label={`Delete ${product.name}`}
 											>
-												Delete
+												Deletar
 											</button>
 										</td>
 									</tr>
@@ -369,15 +369,8 @@ const Product = () => {
 
 			{/* Create/Edit Modal */}
 			{isModalOpen && (
-				// Modal container: no dark overlay, uses a subtle background difference if needed
-				// Use p-4 for padding on smaller screens, allowing scroll
 				<div className="fixed inset-0 z-40 overflow-y-auto bg-[#EEEEEE]/80 backdrop-blur-sm flex items-center justify-center p-4">
 					
-					{/* **** CORREÇÃO APLICADA AQUI ****
-					  Classes de animação removidas: 
-					  'transform', 'transition-all', 'duration-300', 'ease-out', 'scale-95', 'opacity-0', 'animate-fade-in-scale'
-					  O modal agora aparecerá instantaneamente.
-					*/}
 					<div className="bg-[#FFFFFF] p-6 rounded-lg shadow-xl w-full max-w-4xl border border-[#CBCBCB]">
 						
 						{/* Modal Header */}
@@ -404,36 +397,36 @@ const Product = () => {
 
 							<form onSubmit={handleSubmit} className="space-y-4">
 								<InputField
-									label="Product Name"
+									label="Nome do Produto"
 									name="name"
 									value={formData.name}
 									onChange={handleChange}
 									required
-									placeholder="e.g., Office Chair Model X"
+									placeholder="ex.: Cadeira Escolar"
 								/>
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<InputField
-										label="Category"
+										label="Categoria"
 										name="category"
 										value={formData.category}
 										onChange={handleChange}
-										placeholder="e.g., Furniture"
+										placeholder="ex.: Escolar"
 									/>
 									<SelectField
-										label="Supplier"
+										label="Fornecedor"
 										name="supplierId"
 										value={formData.supplierId}
 										onChange={handleChange}
 										options={supplierOptions}
 										required
-										placeholder="-- Select Supplier --"
+										placeholder="Selecionar Fornecedor"
 									/>
 								</div>
 
 								{/* Price Tiers Section */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700 mb-2">
-										Price Tiers <span className="text-red-500">*</span>
+										Preços <span className="text-red-500">*</span>
 									</label>
 									<div className="space-y-2 max-h-96 overflow-y-auto pr-2 border border-[#EEEEEE] rounded-md p-3">
 										{formData.priceTiers.map((tier, index) => (
@@ -455,7 +448,7 @@ const Product = () => {
 									 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
   										<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 									</svg>
-										<span>Add Price Tier</span>
+										<span>Adicionar Preço</span>
 									</button>
 								</div>
 
@@ -469,11 +462,11 @@ const Product = () => {
 								/>
 
 								<TextAreaField
-									label="Description"
+									label="Descrição"
 									name="description"
 									value={formData.description}
 									onChange={handleChange}
-									placeholder="Enter product details..."
+									placeholder="Detalhes do Produto..."
 								/>
 
 								{/* Modal Footer (Buttons) */}
@@ -483,13 +476,13 @@ const Product = () => {
 										onClick={closeModal}
 										className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										Cancel
+										Cancelar
 									</button>
 									<button
 										type="submit"
 										className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										{selectedProduct ? 'Update Product' : 'Save Product'}
+										{selectedProduct ? 'Atualizar Produto' : 'Salvar Produto'}
 									</button>
 								</div>
 							</form>

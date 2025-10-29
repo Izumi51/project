@@ -61,12 +61,12 @@ const MatchDetails = () => {
 
     if (error) return (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-md shadow-md" role="alert">
-            <p className="font-bold">Error loading details</p>
+            <p className="font-bold">Erro carregando detalhes</p>
             <p>{error}</p>
         </div>
     );
 
-    if (!product || !supplier) return <div className="text-center p-10 text-gray-500">No data found.</div>;
+    if (!product || !supplier) return <div className="text-center p-10 text-gray-500">Nenhuma informação encontrada.</div>;
 
     // Sort product price tiers
     const sortedTiers = product.priceTiers ? [...product.priceTiers].sort((a, b) => a.minQuantity - b.minQuantity) : [];
@@ -76,13 +76,13 @@ const MatchDetails = () => {
             {/* Page Header */}
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
                 <div className="flex items-center">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Match Details</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Detalhes do Match</h1>
                 </div>
                 <button
                     onClick={() => navigate(-1)} // Go back to the previous page (Match)
                     className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
                 >
-                    &larr; Back to Matches
+                    &larr; Voltar para Matches
                 </button>
             </div>
 
@@ -90,24 +90,24 @@ const MatchDetails = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 {/* Product Details Card */}
-                <DetailCard title="Product Details">
-                    <DetailItem label="Product Name" value={product.name} />
-                    <DetailItem label="Category" value={product.category} />
+                <DetailCard title="Detalhes do Produto">
+                    <DetailItem label="Nome do Produto" value={product.name} />
+                    <DetailItem label="Categoria" value={product.category} />
                     <DetailItem label="Status" value={product.productStatus} />
                     <div>
-                        <span className="text-sm text-gray-500 block">Description</span>
+                        <span className="text-sm text-gray-500 block">Descrição</span>
                         <p className="text-base text-gray-900 font-medium">{product.description || '-'}</p>
                     </div>
 
                     {/* Price Tiers Table */}
                     <div>
-                        <span className="text-sm text-gray-500 block mb-2">Price Tiers</span>
+                        <span className="text-sm text-gray-500 block mb-2">Preços</span>
                         <div className="border border-gray-200 rounded-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Min. Quantity</th>
-                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Price / Unit</th>
+                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Quantidade Mínima</th>
+                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Preço por Unidade</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -120,7 +120,7 @@ const MatchDetails = () => {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="2" className="py-3 px-3 text-sm text-gray-500 text-center">No price tiers available.</td>
+                                            <td colSpan="2" className="py-3 px-3 text-sm text-gray-500 text-center">Sem Preços Disponíveis.</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -131,10 +131,10 @@ const MatchDetails = () => {
 
                 {/* Supplier Details Card */}
                 <DetailCard title="Supplier Details">
-                    <DetailItem label="Company Name" value={supplier.companyName} />
+                    <DetailItem label="Nome da Empresa" value={supplier.companyName} />
                     <DetailItem label="CNPJ" value={supplier.cnpj} />
-                    <DetailItem label="Contact Name" value={supplier.contactName} />
-                    <DetailItem label="Phone" value={supplier.phone} />
+                    <DetailItem label="Nome de Contato" value={supplier.contactName} />
+                    <DetailItem label="Telefone" value={supplier.phone} />
                     <DetailItem label="Email" value={supplier.email} />
                     <DetailItem label="Status" value={supplier.supplierStatus} />
                 </DetailCard>

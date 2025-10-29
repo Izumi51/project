@@ -5,45 +5,36 @@ import { useAuth } from '../../hooks/auth/useAuth';
 const NavBar = () => {
 	const { isAuthenticated, logout, userName } = useAuth();
 
-	/**
-	 * Define as classes do NavLink.
-	 * Fundo claro (#EEEEEE) com texto escuro (#777C6D) para links ativos.
-	 */
 	const getNavLinkClass = ({ isActive }) => {
 		return `block w-full text-left py-3 px-4 rounded-md transition duration-200 ${isActive
-			// Estilo ativo: Fundo cinza claro, texto escuro
+			// Active
 			? 'bg-[#EEEEEE] text-gray-900 font-semibold'
-			// Estilo inativo: Texto cinza escuro, hover com fundo cinza claro
+			// Inactive
 			: 'text-gray-700 hover:bg-[#EEEEEE] hover:text-gray-900'
 			}`;
 	};
 
 	return (
-		/* * Container da Sidebar:
-		 * - Fundo: #FFFFFF (Branco)
-		 * - Texto: #text-gray-900 (Preto/Cinza Escuro)
-		 * - Borda: #CBCBCB (Cinza)
-		*/
 		<aside className="fixed top-0 left-0 h-screen w-60 bg-[#FFFFFF] text-gray-900 flex flex-col border-r border-[#CBCBCB] z-20">
 
-			{/* 1. Área do Logo/Título (Texto escuro) */}
+			{/* 1. Tttle */}
 			<div className="p-5 border-b border-[#CBCBCB]">
 				<h1 className="text-2xl font-bold text-center text-gray-900">
 					ProjectNI
 				</h1>
 			</div>
 
-			{/* 2. Navegação Principal */}
+			{/* 2. Main Nav */}
 			<nav className="flex-1 p-3 overflow-y-auto">
 				<ul className="space-y-2">
-					{/* Links Públicos */}
+					{/* Public Links */}
 					<li>
 						<NavLink to="/" end className={getNavLinkClass}>
 							Página inicial
 						</NavLink>
 					</li>
 
-					{/* Links Protegidos (só aparecem se logado) */}
+					{/* Protected Links */}
 					{isAuthenticated && (
 						<>
 							<li>
@@ -71,7 +62,7 @@ const NavBar = () => {
 				</ul>
 			</nav>
 
-			{/* 3. Área do Utilizador/Auth (ajustada para tema claro) */}
+			{/* 3. Auth  */}
 			<div className="p-4 border-t border-[#CBCBCB]">
 				{isAuthenticated ? (
 					<div className="text-center">
@@ -89,7 +80,6 @@ const NavBar = () => {
 				) : (
 					<NavLink
 						to="/login"
-						// Botão de Login com a cor escura da sua paleta
 						className="block w-full text-center bg-[#777C6D] hover:bg-[#5f6356] text-white py-2 px-4 rounded-md transition duration-200"
 					>
 						Login

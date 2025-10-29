@@ -2,14 +2,14 @@ import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../hooks/auth/useAuth';
 
 const ProtectedRoutes = () => {
-    const { isAuthenticated } = useAuth(); // Pega o estado do seu AuthContext
+    const { isAuthenticated } = useAuth();
 
     if (!isAuthenticated) {
-        // Se não estiver logado, redireciona para /login
+        // If not logged redirect to /login
         return <Navigate to="/login" replace />;
     }
 
-    // Se estiver logado, permite a renderização da rota filha (ex: Profile)
+    // If logged allow the children route render 
     return <Outlet />;
 };
 

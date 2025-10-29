@@ -104,7 +104,7 @@ const Bidding = () => {
 		<div className="container mx-auto p-4 md:p-6">
 			{/* Page Header (Estilo de Product.jsx) */}
 			<div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
-				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Biddings</h1>
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">Minhas Licitações</h1>
 				<button
 					onClick={handleAddNew}
 					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out flex items-center space-x-1"
@@ -112,33 +112,33 @@ const Bidding = () => {
 					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
 						<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 					</svg>
-					<span>New Bidding</span>
+					<span>Nova Licitação</span>
 				</button>
 			</div>
 
-			{/* API Error (Estilo de Product.jsx) */}
+			{/* API Error */}
 			{apiError && !isModalOpen && (
 				<div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center" role="alert">
 					{apiError}
 				</div>
 			)}
 
-			{/* Biddings Table (Estilo de Product.jsx) */}
+			{/* Biddings Table */}
 			<div className="bg-[#FFFFFF] shadow-md rounded-lg overflow-x-auto">
 				<table className="min-w-full divide-y divide-[#EEEEEE]">
 					<thead className="bg-gray-50">
 						<tr>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Name</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Product</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Qty.</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Nome</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Produto</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Quatidade</th>
 							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Status</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Actions</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Ações</th>
 						</tr>
 					</thead>
 					<tbody className="bg-white divide-y divide-[#EEEEEE]">
 						{biddings.length === 0 ? (
 							<tr>
-								<td colSpan="5" className="text-center py-6 text-gray-500">No biddings found.</td>
+								<td colSpan="5" className="text-center py-6 text-gray-900">Nenhuma Licitação Encontrada</td>
 							</tr>
 						) : (
 							biddings.map(bidding => (
@@ -164,14 +164,14 @@ const Bidding = () => {
 											className="text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out"
 											aria-label={`Edit ${bidding.name}`}
 										>
-											Edit
+											Editar
 										</button>
 										<button
 											onClick={() => handleDelete(bidding.idBidding)}
 											className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
 											aria-label={`Delete ${bidding.name}`}
 										>
-											Delete
+											Deletar
 										</button>
 									</td>
 								</tr>
@@ -181,7 +181,7 @@ const Bidding = () => {
 				</table>
 			</div>
 
-			{/* Create/Edit Modal (Corrigido na etapa anterior) */}
+			{/* Create/Edit Modal */}
 			{isModalOpen && (
 				<div className="fixed inset-0 z-40 overflow-y-auto bg-[#EEEEEE]/80 backdrop-blur-sm flex items-center justify-center p-4">
 					
@@ -190,8 +190,9 @@ const Bidding = () => {
 						{/* Modal Header */}
 						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
 							<h2 className="text-xl font-semibold text-gray-800">
-								{selectedBidding ? 'Edit Bidding' : 'New Bidding'}
+								{selectedBidding ? 'Editar Licitação' : 'Nova Licitação'}
 							</h2>
+							{/* X button */}
 							<button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 focus:outline-none">
 								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -212,7 +213,7 @@ const Bidding = () => {
 
 							<form onSubmit={handleSubmit} className="space-y-4">
 								<div>
-									<label className="block text-sm font-medium text-gray-700">Bidding Name</label>
+									<label className="block text-sm font-medium text-gray-700">Nome da Licitação</label>
 									<input
 										type="text"
 										name="name"
@@ -224,7 +225,7 @@ const Bidding = () => {
 								</div>
 
 								<div>
-									<label className="block text-sm font-medium text-gray-700">Desired Product</label>
+									<label className="block text-sm font-medium text-gray-700">Produto Desejado</label>
 									<input
 										type="text"
 										name="productBidding"
@@ -237,7 +238,7 @@ const Bidding = () => {
 
 								<div className="flex space-x-4">
 									<div className="flex-1">
-										<label className="block text-sm font-medium text-gray-700">Category</label>
+										<label className="block text-sm font-medium text-gray-700">Categoria</label>
 										<input
 											type="text"
 											name="category"
@@ -247,7 +248,7 @@ const Bidding = () => {
 										/>
 									</div>
 									<div className="flex-1">
-										<label className="block text-sm font-medium text-gray-700">Quantity</label>
+										<label className="block text-sm font-medium text-gray-700">Quantidade</label>
 										<input
 											type="number"
 											name="quantity"
@@ -261,7 +262,7 @@ const Bidding = () => {
 								</div>
 
 								<div>
-									<label className="block text-sm font-medium text-gray-700">Description</label>
+									<label className="block text-sm font-medium text-gray-700">Descrição</label>
 									<textarea
 										name="description"
 										value={formData.description}
@@ -278,13 +279,13 @@ const Bidding = () => {
 										onClick={() => setIsModalOpen(false)}
 										className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										Cancel
+										Cancelar
 									</button>
 									<button
 										type="submit"
 										className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										{selectedBidding ? 'Update' : 'Save'}
+										{selectedBidding ? 'Atualizar' : 'Salvar'}
 									</button>
 								</div>
 							</form>

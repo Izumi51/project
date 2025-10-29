@@ -110,7 +110,7 @@ const Supplier = () => {
 		<div className="container mx-auto p-4 md:p-6">
 			{/* Page Header (Estilo de Product.jsx) */}
 			<div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
-				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Suppliers</h1>
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">Meus Fornecedores</h1>
 				<button
 					onClick={handleAddNew}
 					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out flex items-center space-x-1"
@@ -118,7 +118,7 @@ const Supplier = () => {
 					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
 						<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
 					</svg>
-					<span>New Supplier</span>
+					<span>Novo Fornecedor</span>
 				</button>
 			</div>
 			
@@ -135,17 +135,17 @@ const Supplier = () => {
 				<table className="min-w-full divide-y divide-[#EEEEEE]">
 					<thead className="bg-gray-50">
 						<tr>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Company Name</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Nome da Empresa</th>
 							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">CNPJ</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Contact</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Contato</th>
 							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Status</th>
-							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Actions</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Ações</th>
 						</tr>
 					</thead>
 					<tbody className="bg-white divide-y divide-[#EEEEEE]">
 						{suppliers.length === 0 ? (
 							<tr>
-								<td colSpan="5" className="text-center py-6 text-gray-500">No suppliers found.</td>
+								<td colSpan="5" className="text-center py-6 text-gray-500">Nenhum Fornecedor Encontrado</td>
 							</tr>
 						) : (
 							suppliers.map(supplier => (
@@ -171,14 +171,14 @@ const Supplier = () => {
 											className="text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out"
 											aria-label={`Edit ${supplier.companyName}`}
 										>
-											Edit
+											Editar
 										</button>
 										<button
 											onClick={() => handleDelete(supplier.idSupplier)}
 											className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
 											aria-label={`Delete ${supplier.companyName}`}
 										>
-											Delete
+											Deletar
 										</button>
 									</td>
 								</tr>
@@ -188,7 +188,7 @@ const Supplier = () => {
 				</table>
 			</div>
 
-			{/* Create/Edit Modal (Corrigido na etapa anterior) */}
+			{/* Create/Edit Modal */}
 			{isModalOpen && (
 				<div className="fixed inset-0 z-40 overflow-y-auto bg-[#EEEEEE]/80 backdrop-blur-sm flex items-center justify-center p-4">
 
@@ -197,7 +197,7 @@ const Supplier = () => {
 						{/* Modal Header */}
 						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
 							<h2 className="text-xl font-semibold text-gray-800">
-								{selectedSupplier ? 'Edit Supplier' : 'New Supplier'}
+								{selectedSupplier ? 'Editar Fornecedor' : 'Novo Fornecedor'}
 							</h2>
 							<button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 focus:outline-none">
 								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,7 +221,7 @@ const Supplier = () => {
 
 								<div className="flex space-x-4">
 									<div className="flex-1">
-										<label className="block text-sm font-medium text-gray-700">Company Name</label>
+										<label className="block text-sm font-medium text-gray-700">Nome da Empresa</label>
 										<input
 											type="text"
 											name="companyName"
@@ -246,7 +246,7 @@ const Supplier = () => {
 
 								<div className="flex space-x-4">
 									<div className="flex-1">
-										<label className="block text-sm font-medium text-gray-700">Contact Name</label>
+										<label className="block text-sm font-medium text-gray-700">Nome de Contato</label>
 										<input
 											type="text"
 											name="contactName"
@@ -256,7 +256,7 @@ const Supplier = () => {
 										/>
 									</div>
 									<div className="flex-1">
-										<label className="block text-sm font-medium text-gray-700">Phone</label>
+										<label className="block text-sm font-medium text-gray-700">Telefone</label>
 										<input
 											type="text"
 											name="phone"
@@ -301,13 +301,13 @@ const Supplier = () => {
 										onClick={() => setIsModalOpen(false)}
 										className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										Cancel
+										Cancelar
 									</button>
 									<button
 										type="submit"
 										className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
 									>
-										{selectedSupplier ? 'Update' : 'Save'}
+										{selectedSupplier ? 'Atualizar' : 'Salvar'}
 									</button>
 								</div>
 							</form>
