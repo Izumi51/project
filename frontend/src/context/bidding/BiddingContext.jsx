@@ -1,13 +1,14 @@
 import { createContext } from 'react';
 
 const BiddingContext = createContext({
-    // token: null,
-    // userName: null,
-    // userId: null,
-    // isAuthenticated: false,
-    // login: () => {},
-    // logout: () => {},
-    // register: () => {},
+    biddings: [],
+    loading: true,
+    error: null,
+    fetchBiddings: () => {},
+    createBidding: async () => {},
+    updateBidding: async () => {},
+    deleteBidding: async () => {},
+    updateBiddingStatus: async () => {},
 });
 
 export default BiddingContext;

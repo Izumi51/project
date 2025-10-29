@@ -15,7 +15,7 @@ import Product from './pages/Product.jsx'
 import Supplier from './pages/Supplier.jsx'
 import Match from './pages/Match.jsx'
 import NotFound from './pages/Notfound.jsx';
-// import Register from './pages/Register.jsx';
+import Register from './pages/Register.jsx';
 // import ForgotPassword from './pages/ForgotPassword.jsx';
 // import ProductDetails from './pages/ProductDetails.jsx';
 // import User from './pages/User.jsx'; // (Profile)
@@ -38,10 +38,10 @@ const router = createBrowserRouter([
 				element: <Login />,
 			},
 
-			// {
-			// 	path: "/register",
-			// 	element: <Register />,
-			// },
+			{
+				path: "/register",
+				element: <Register />,
+			},
 
 			// {
 			// 	path: "/forgot-password",

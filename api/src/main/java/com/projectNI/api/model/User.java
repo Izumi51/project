@@ -5,8 +5,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Table(name="user")
-@Entity(name = "user")
+@Table(name="client")
+@Entity(name = "client")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,9 +27,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private int phone;
 
-    @Column(nullable = false)
+    @Column
     private int cnpj;
 }

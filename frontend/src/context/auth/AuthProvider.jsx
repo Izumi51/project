@@ -8,7 +8,7 @@ const AuthProvider = ({ children }) => {
     const [userName, setUserName] = useState(localStorage.getItem('userName'));
     const [userId, setUserId] = useState(localStorage.getItem('userId'));
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
-    
+
     // O useEffect foi removido pois era redundante.
     // O useState na inicialização já cuida disso.
 
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
             setUserName(name);
             setUserId(userId);
             setIsAuthenticated(true);
-            
+
             // Não retornamos mais { success: true }
             // A ausência de erro já indica sucesso.
 
@@ -37,12 +37,12 @@ const AuthProvider = ({ children }) => {
             setUserName(null);
             setUserId(null);
             setIsAuthenticated(false);
-            
+
             // **MUDANÇA APLICADA AQUI**
             // Lança o erro para a UI capturar (via try...catch)
-            const errorMessage = loginError.response?.data?.message || 
-                                 loginError.response?.status === 401 ? 'Email ou senha inválidos' :
-                                 'Erro ao fazer login. Tente novamente.';
+            const errorMessage = loginError.response?.data?.message ||
+                loginError.response?.status === 401 ? 'Email ou senha inválidos' :
+                'Erro ao fazer login. Tente novamente.';
             throw new Error(errorMessage);
         }
     };
@@ -62,9 +62,9 @@ const AuthProvider = ({ children }) => {
 
         } catch (error) {
             // Seu tratamento de erro original (que já estava ótimo)
-            const errorMessage = error.response?.data?.message || 
-                               error.response?.status === 400 ? 'Email já está em uso' : 
-                               'Erro ao registrar. Tente novamente.';
+            const errorMessage = error.response?.data?.message ||
+                error.response?.status === 400 ? 'Email já está em uso' :
+                'Erro ao registrar. Tente novamente.';
             throw new Error(errorMessage);
         }
     };
@@ -75,7 +75,7 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem('userId');
         setToken(null);
         setUserName(null);
-        setUserId(null); 
+        setUserId(null);
         setIsAuthenticated(false);
     };
 
