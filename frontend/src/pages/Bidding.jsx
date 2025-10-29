@@ -101,62 +101,75 @@ const Bidding = () => {
 	if (error && !loading) return <div className="text-red-500 text-center p-10">Error: {error}</div>;
 
 	return (
-		<div className="container mx-auto">
-			{/* Title and Add Button */}
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-3xl font-bold text-gray-800">My Biddings</h1>
+		<div className="container mx-auto p-4 md:p-6">
+			{/* Page Header (Estilo de Product.jsx) */}
+			<div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Biddings</h1>
 				<button
 					onClick={handleAddNew}
-					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-bold py-2 px-4 rounded-md transition duration-200"
+					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out flex items-center space-x-1"
 				>
-					+ New Bidding
+					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+						<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+					</svg>
+					<span>New Bidding</span>
 				</button>
 			</div>
 
-			{/* Biddings Table */}
-			<div className="bg-[#FFFFFF] shadow-md rounded-lg overflow-hidden">
-				<table className="min-w-full divide-y divide-[#CBCBCB]">
-					<thead className="bg-[#EEEEEE]">
+			{/* API Error (Estilo de Product.jsx) */}
+			{apiError && !isModalOpen && (
+				<div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center" role="alert">
+					{apiError}
+				</div>
+			)}
+
+			{/* Biddings Table (Estilo de Product.jsx) */}
+			<div className="bg-[#FFFFFF] shadow-md rounded-lg overflow-x-auto">
+				<table className="min-w-full divide-y divide-[#EEEEEE]">
+					<thead className="bg-gray-50">
 						<tr>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Name</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Product</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Qty.</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Status</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Actions</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Name</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Product</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Qty.</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Status</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Actions</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-[#EEEEEE]">
+					<tbody className="bg-white divide-y divide-[#EEEEEE]">
 						{biddings.length === 0 ? (
 							<tr>
 								<td colSpan="5" className="text-center py-6 text-gray-500">No biddings found.</td>
 							</tr>
 						) : (
 							biddings.map(bidding => (
-								<tr key={bidding.idBidding} className="hover:bg-gray-50">
-									<td className="py-4 px-4">{bidding.name}</td>
-									<td className="py-4 px-4">{bidding.productBidding}</td>
-									<td className="py-4 px-4">{bidding.quantity}</td>
-									<td className="py-4 px-4">
+								<tr key={bidding.idBidding} className="hover:bg-gray-50 transition duration-150 ease-in-out">
+									<td className="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">{bidding.name}</td>
+									<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{bidding.productBidding}</td>
+									<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{bidding.quantity}</td>
+									<td className="py-4 px-4 whitespace-nowrap text-sm">
 										<select
 											value={bidding.biddingStatus}
 											onChange={(e) => handleStatusChange(bidding.idBidding, e.target.value)}
-											className="text-xs p-1 rounded border border-[#CBCBCB]"
+											className="text-xs p-1 rounded border border-[#CBCBCB] w-full"
+											aria-label={`Status for ${bidding.name}`}
 										>
 											{STATUS_OPTIONS.map(status => (
 												<option key={status} value={status}>{status}</option>
 											))}
 										</select>
 									</td>
-									<td className="py-4 px-4 space-x-2">
+									<td className="py-4 px-4 whitespace-nowrap text-sm space-x-2">
 										<button
 											onClick={() => handleEdit(bidding)}
-											className="text-sm bg-[#B7B89F] hover:bg-[#a7a88f] text-white py-1 px-3 rounded-md"
+											className="text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out"
+											aria-label={`Edit ${bidding.name}`}
 										>
 											Edit
 										</button>
 										<button
 											onClick={() => handleDelete(bidding.idBidding)}
-											className="text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-md"
+											className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
+											aria-label={`Delete ${bidding.name}`}
 										>
 											Delete
 										</button>
@@ -168,99 +181,114 @@ const Bidding = () => {
 				</table>
 			</div>
 
-			{/* Create/Edit Modal */}
+			{/* Create/Edit Modal (Corrigido na etapa anterior) */}
 			{isModalOpen && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
-					<div className="bg-[#FFFFFF] p-8 rounded-lg shadow-xl w-full max-w-2xl">
-						<h2 className="text-2xl font-bold mb-6 text-gray-800">
-							{selectedBidding ? 'Edit Bidding' : 'New Bidding'}
-						</h2>
+				<div className="fixed inset-0 z-40 overflow-y-auto bg-[#EEEEEE]/80 backdrop-blur-sm flex items-center justify-center p-4">
+					
+					<div className="bg-[#FFFFFF] p-6 rounded-lg shadow-xl w-full max-w-4xl border border-[#CBCBCB]">
+						
+						{/* Modal Header */}
+						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
+							<h2 className="text-xl font-semibold text-gray-800">
+								{selectedBidding ? 'Edit Bidding' : 'New Bidding'}
+							</h2>
+							<button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 focus:outline-none">
+								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+								</svg>
+							</button>
+						</div>
 
-						{/* Shows form error */}
-						{apiError && (
-							<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-								{apiError}
-							</div>
-						)}
+						{/* Modal Body */}
+						<div className="mt-4">
 
-						<form onSubmit={handleSubmit} className="space-y-4">
-							<div>
-								<label className="block text-sm font-medium text-gray-700">Bidding Name</label>
-								<input
-									type="text"
-									name="name"
-									value={formData.name}
-									onChange={handleChange}
-									required
-									className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
-								/>
-							</div>
+							{/* Shows form error */}
+							{apiError && (
+								<div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+									<p className="font-bold">Error</p>
+									<p>{apiError}</p>
+								</div>
+							)}
 
-							<div>
-								<label className="block text-sm font-medium text-gray-700">Desired Product</label>
-								<input
-									type="text"
-									name="productBidding"
-									value={formData.productBidding}
-									onChange={handleChange}
-									required
-									className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
-								/>
-							</div>
-
-							<div className="flex space-x-4">
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700">Category</label>
+							<form onSubmit={handleSubmit} className="space-y-4">
+								<div>
+									<label className="block text-sm font-medium text-gray-700">Bidding Name</label>
 									<input
 										type="text"
-										name="category"
-										value={formData.category}
-										onChange={handleChange}
-										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
-									/>
-								</div>
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700">Quantity</label>
-									<input
-										type="number"
-										name="quantity"
-										value={formData.quantity}
+										name="name"
+										value={formData.name}
 										onChange={handleChange}
 										required
-										min="1"
 										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
 									/>
 								</div>
-							</div>
 
-							<div>
-								<label className="block text-sm font-medium text-gray-700">Description</label>
-								<textarea
-									name="description"
-									value={formData.description}
-									onChange={handleChange}
-									rows="4"
-									className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
-								/>
-							</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-700">Desired Product</label>
+									<input
+										type="text"
+										name="productBidding"
+										value={formData.productBidding}
+										onChange={handleChange}
+										required
+										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+									/>
+								</div>
 
-							{/* Form Buttons */}
-							<div className="flex justify-end space-x-3 pt-4">
-								<button
-									type="button"
-									onClick={() => setIsModalOpen(false)}
-									className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md"
-								>
-									Cancel
-								</button>
-								<button
-									type="submit"
-									className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-bold py-2 px-4 rounded-md"
-								>
-									{selectedBidding ? 'Update' : 'Save'}
-								</button>
-							</div>
-						</form>
+								<div className="flex space-x-4">
+									<div className="flex-1">
+										<label className="block text-sm font-medium text-gray-700">Category</label>
+										<input
+											type="text"
+											name="category"
+											value={formData.category}
+											onChange={handleChange}
+											className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+										/>
+									</div>
+									<div className="flex-1">
+										<label className="block text-sm font-medium text-gray-700">Quantity</label>
+										<input
+											type="number"
+											name="quantity"
+											value={formData.quantity}
+											onChange={handleChange}
+											required
+											min="1"
+											className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+										/>
+									</div>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-gray-700">Description</label>
+									<textarea
+										name="description"
+										value={formData.description}
+										onChange={handleChange}
+										rows="4"
+										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+									/>
+								</div>
+
+								{/* Form Buttons */}
+								<div className="flex justify-end space-x-3 pt-4 border-t border-[#EEEEEE] mt-6">
+									<button
+										type="button"
+										onClick={() => setIsModalOpen(false)}
+										className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+									>
+										Cancel
+									</button>
+									<button
+										type="submit"
+										className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+									>
+										{selectedBidding ? 'Update' : 'Save'}
+									</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			)}

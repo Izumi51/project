@@ -16,6 +16,7 @@ import Supplier from './pages/Supplier.jsx'
 import Match from './pages/Match.jsx'
 import NotFound from './pages/Notfound.jsx';
 import Register from './pages/Register.jsx';
+import MatchDetails from './pages/MatchDetails.jsx'
 // import ForgotPassword from './pages/ForgotPassword.jsx';
 // import ProductDetails from './pages/ProductDetails.jsx';
 // import User from './pages/User.jsx'; // (Profile)
@@ -81,6 +82,11 @@ const router = createBrowserRouter([
 					{
 						path: "/match",
 						element: <Match />,
+					},
+
+					{
+						path: "/match/:productId/:supplierId",
+						element: <MatchDetails />,
 					},
 				],
 			},
