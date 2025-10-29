@@ -3,8 +3,9 @@ package com.projectNI.api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
 import java.util.Comparator;
+import java.util.List;
+import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class Product {
      * are saved, updated, and deleted along with the product.
      */
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<PriceTier> priceTiers;
+    private List<PriceTier> priceTiers = new ArrayList<>();
 
     /**
      * HELPER METHOD (CRITICAL):

@@ -1,8 +1,7 @@
 package com.projectNI.api.dto.product;
 
 import com.projectNI.api.model.ProductStatus;
-import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record ProductResponseDTO(
@@ -10,7 +9,7 @@ public record ProductResponseDTO(
         String name,
         String category,
         // BigDecimal pricePerUnit,
-        Set<PriceTierDTO> priceTiers,
+        List<PriceTierDTO> priceTiers,
         String description,
         ProductStatus productStatus,
         UUID supplierId,

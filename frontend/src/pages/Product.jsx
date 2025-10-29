@@ -1,122 +1,232 @@
-import React, { useState } from 'react';
-// Import both hooks
+import React, { useState, useEffect } from 'react';
 import { useProduct } from '../hooks/product/useProduct';
 import { useSupplier } from '../hooks/supplier/useSupplier';
 
-// DTO: name, category, supplierId, description, productStatus, priceTiers
+// DTO initial state
 const DTO_INITIAL_FIELDS = {
 	name: '',
 	category: '',
-	supplierId: '', // Will be a UUID string
+	supplierId: '',
 	description: '',
-	productStatus: 'SELLING', // Default status
-	// NEW: Initialize with a base price tier
+	productStatus: 'SELLING',
 	priceTiers: [{ minQuantity: 1, pricePerUnit: 0.00 }]
 };
 
-// Statuses from ProductStatus.java
+// Status options from backend enum
 const STATUS_OPTIONS = ['SELLING', 'INACTIVE', 'NO_STOCK'];
 
+// --- Helper Components ---
+
+// Input field component for consistency
+const InputField = ({ label, name, value, onChange, type = 'text', required = false, ...props }) => (
+	<div>
+		<label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+			{label} {required && <span className="text-red-500">*</span>}
+		</label>
+		<input
+			type={type}
+			id={name}
+			name={name}
+			value={value}
+			onChange={onChange}
+			required={required}
+			className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm focus:outline-none focus:ring-[#777C6D] focus:border-[#777C6D] sm:text-sm transition duration-150 ease-in-out"
+			{...props}
+		/>
+	</div>
+);
+
+// Select field component
+const SelectField = ({ label, name, value, onChange, options, required = false, placeholder, ...props }) => (
+	<div>
+		<label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+			{label} {required && <span className="text-red-500">*</span>}
+		</label>
+		<select
+			id={name}
+			name={name}
+			value={value}
+			onChange={onChange}
+			required={required}
+			className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm focus:outline-none focus:ring-[#777C6D] focus:border-[#777C6D] sm:text-sm bg-white transition duration-150 ease-in-out"
+			{...props}
+		>
+			{placeholder && <option value="">{placeholder}</option>}
+			{options.map(option => (
+				<option key={option.value} value={option.value}>
+					{option.label}
+				</option>
+			))}
+		</select>
+	</div>
+);
+
+// Textarea component
+const TextAreaField = ({ label, name, value, onChange, rows = 3, ...props }) => (
+	<div>
+		<label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+			{label}
+		</label>
+		<textarea
+			id={name}
+			name={name}
+			value={value}
+			onChange={onChange}
+			rows={rows}
+			className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm focus:outline-none focus:ring-[#777C6D] focus:border-[#777C6D] sm:text-sm transition duration-150 ease-in-out"
+			{...props}
+		/>
+	</div>
+);
+
+// Price Tier Row Component
+const PriceTierRow = ({ tier, index, onChange, onRemove, canRemove }) => (
+	<div className="flex items-end space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-md mb-2 shadow-sm">
+		<InputField
+			label="Min. Qty"
+			type="number"
+			name="minQuantity"
+			value={tier.minQuantity}
+			onChange={(e) => onChange(index, e)}
+			required
+			min="1"
+			placeholder="e.g., 1"
+		/>
+		<InputField
+			label="Price/Unit (R$)"
+			type="number"
+			name="pricePerUnit"
+			value={tier.pricePerUnit}
+			onChange={(e) => onChange(index, e)}
+			required
+			min="0.01"
+			step="0.01"
+			placeholder="e.g., 10.00"
+		/>
+		<button
+			type="button"
+			onClick={() => onRemove(index)}
+			disabled={!canRemove}
+			className={`px-3 py-2 rounded-md text-white transition duration-150 ease-in-out ${
+				canRemove
+					? 'bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+					: 'bg-red-300 cursor-not-allowed'
+			}`}
+			aria-label="Remove price tier"
+		>
+			{/* Simple icon or text */}
+			X
+		</button>
+	</div>
+);
+
+// --- Main Product Component ---
+
 const Product = () => {
-	// Consume both contexts
-	const productContext = useProduct();
-	const supplierContext = useSupplier();
+	const {
+		products,
+		loading: productsLoading,
+		error: productsError,
+		createProduct,
+		updateProduct,
+		deleteProduct,
+		updateProductStatus
+	} = useProduct();
+
+	const {
+		suppliers,
+		loading: suppliersLoading,
+		error: suppliersError
+	} = useSupplier();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formData, setFormData] = useState(DTO_INITIAL_FIELDS);
-	const [selectedProduct, setSelectedProduct] = useState(null); // for editing
-	const [apiError, setApiError] = useState(null); // Form API error
+	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [apiError, setApiError] = useState(null);
 
-	// Opens the modal to create a new one
+	// Derived loading and error states
+	const isLoading = productsLoading || suppliersLoading;
+	const fetchError = productsError || suppliersError;
+
+	// Reset form and close modal
+	const closeModal = () => {
+		setIsModalOpen(false);
+		setFormData(DTO_INITIAL_FIELDS);
+		setSelectedProduct(null);
+		setApiError(null);
+	};
+
+	// Open modal for adding
 	const handleAddNew = () => {
 		setSelectedProduct(null);
-		setFormData(DTO_INITIAL_FIELDS); // Reset with the initial price tier
+		setFormData(DTO_INITIAL_FIELDS);
 		setApiError(null);
 		setIsModalOpen(true);
 	};
 
-	// Opens the modal to edit an existing one
+	// Open modal for editing
 	const handleEdit = (product) => {
 		setSelectedProduct(product);
-		
-		// Sort price tiers by minimum quantity for stable display
-		const sortedTiers = product.priceTiers 
+		const sortedTiers = product.priceTiers
 			? [...product.priceTiers].sort((a, b) => a.minQuantity - b.minQuantity)
 			: [];
-
-		// Populate form with fields from ProductRequestDTO
 		setFormData({
 			name: product.name,
 			category: product.category,
 			supplierId: product.supplierId,
 			description: product.description,
 			productStatus: product.productStatus,
-			// UPDATED: Populate price tiers
 			priceTiers: sortedTiers.length > 0 ? sortedTiers : DTO_INITIAL_FIELDS.priceTiers
 		});
 		setApiError(null);
 		setIsModalOpen(true);
 	};
 
+	// Handle delete action
 	const handleDelete = async (id) => {
-		if (window.confirm('Are you sure you want to delete this product?')) {
+		if (window.confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+			setApiError(null); // Clear previous errors
 			try {
-				await productContext.deleteProduct(id);
+				await deleteProduct(id);
 			} catch (err) {
-				// Show main error if delete fails
-				setApiError(err.message);
+				setApiError(err.message || 'Failed to delete product.');
 			}
 		}
 	};
 
+	// Handle status change from table dropdown
 	const handleStatusChange = async (id, newStatus) => {
+		setApiError(null); // Clear previous errors
 		try {
-			await productContext.updateProductStatus(id, newStatus);
+			await updateProductStatus(id, newStatus);
 		} catch (err) {
-			// Show main error if status change fails
-			setApiError(err.message);
+			setApiError(err.message || 'Failed to update status.');
+			// Optionally revert UI change or refetch data if needed
 		}
-	}
-
-	// Handler for normal form fields
-	const handleChange = (e) => {
-		const { name, value, type } = e.target;
-		setFormData(prev => ({
-			...prev,
-			[name]: type === 'number' ? parseFloat(value) : value
-		}));
 	};
 
-	// --- NEW HANDLERS FOR PRICE TIERS ---
+	// Generic change handler for simple fields
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData(prev => ({ ...prev, [name]: value }));
+	};
 
-	// Handles changes in a price tier input
+	// Price Tier Handlers
 	const handleTierChange = (index, e) => {
 		const { name, value } = e.target;
 		const newTiers = [...formData.priceTiers];
-		const numValue = name === 'minQuantity' ? parseInt(value) || 0 : parseFloat(value) || 0.00;
-		
-		newTiers[index] = { 
-			...newTiers[index], 
-			[name]: numValue
-		};
-		
+		const numValue = name === 'minQuantity' ? parseInt(value, 10) || 0 : parseFloat(value) || 0.00;
+		newTiers[index] = { ...newTiers[index], [name]: numValue };
 		setFormData(prev => ({ ...prev, priceTiers: newTiers }));
 	};
 
-	// Adds a new empty price tier
 	const addTier = () => {
-		// Suggest a new quantity based on the highest existing one
 		const maxQty = Math.max(0, ...formData.priceTiers.map(t => t.minQuantity));
-		setFormData(prev => ({
-			...prev,
-			priceTiers: [
-				...prev.priceTiers, 
-				{ minQuantity: maxQty + 1, pricePerUnit: 0.00 }
-			].sort((a, b) => a.minQuantity - b.minQuantity) // Keep sorted
-		}));
+		const newTier = { minQuantity: maxQty + 1, pricePerUnit: 0.00 };
+		const updatedTiers = [...formData.priceTiers, newTier].sort((a, b) => a.minQuantity - b.minQuantity);
+		setFormData(prev => ({ ...prev, priceTiers: updatedTiers }));
 	};
 
-	// Removes a price tier
 	const removeTier = (index) => {
 		if (formData.priceTiers.length <= 1) {
 			setApiError("A product must have at least one price tier.");
@@ -126,146 +236,125 @@ const Product = () => {
 		setFormData(prev => ({ ...prev, priceTiers: newTiers }));
 	};
 
-	// --- END OF NEW HANDLERS ---
-
-
+	// Form Submission
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setApiError(null);
 
-		// --- UPDATED VALIDATION ---
-		if (!formData.supplierId) {
-			setApiError('You must select a supplier.');
-			return;
-		}
-		if (!formData.priceTiers || formData.priceTiers.length === 0) {
-            setApiError('You must add at least one price tier.');
-            return;
-        }
-        if (formData.priceTiers.some(t => t.minQuantity < 1)) {
-            setApiError('The minimum quantity for all tiers must be 1 or greater.');
-            return;
-        }
-		// Check if there is at least one tier with minQuantity = 1
-		if (!formData.priceTiers.some(t => t.minQuantity === 1)) {
-			setApiError('You must define a price for the minimum quantity of 1.');
-			return;
-		}
-        const quantities = formData.priceTiers.map(t => t.minQuantity);
-        if (new Set(quantities).size !== quantities.length) {
-            setApiError('The minimum quantities for each tier must be unique.');
-            return;
-        }
-		// --- END OF VALIDATION ---
+		// Validation
+		if (!formData.supplierId) return setApiError('Supplier is required.');
+		if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('At least one price tier is required.');
+		if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('Minimum quantity must be 1 or greater.');
+		if (!formData.priceTiers.some(t => t.minQuantity === 1)) return setApiError('A price tier for minimum quantity 1 is required.');
+		const quantities = formData.priceTiers.map(t => t.minQuantity);
+        if (new Set(quantities).size !== quantities.length) return setApiError('Minimum quantities for tiers must be unique.');
+
+		// Prepare data (ensure numbers are numbers) - already handled by handleTierChange
+		const submissionData = {
+			...formData,
+			// Ensure supplierId is correct if needed, already set via handleChange
+		};
 
 		try {
 			if (selectedProduct) {
-				// Update (PUT) - formData already contains priceTiers
-				await productContext.updateProduct(selectedProduct.idProduct, formData);
+				await updateProduct(selectedProduct.idProduct, submissionData);
 			} else {
-				// Create (POST) - formData already contains priceTiers
-				await productContext.createProduct(formData);
+				await createProduct(submissionData);
 			}
-			setIsModalOpen(false); // Close modal on success
+			closeModal(); // Close modal on success
 		} catch (err) {
-			setApiError(err.message); // Show API error in the modal
+			setApiError(err.message || 'An error occurred while saving the product.');
 		}
 	};
 
-	// Helper to get the base price for display in the table
+	// Helper to get base price for table display
 	const getBasePrice = (tiers) => {
 		if (!tiers || tiers.length === 0) return 0.00;
-		
-		// Find the price for the smallest quantity (ideally 1)
-		const baseTier = tiers.reduce((min, tier) => 
-			tier.minQuantity < min.minQuantity ? tier : min
-		, tiers[0]);
-		
+		const baseTier = tiers.reduce((min, tier) => tier.minQuantity < min.minQuantity ? tier : min, tiers[0]);
 		return baseTier.pricePerUnit;
 	};
 
+	// Map suppliers for SelectField
+	const supplierOptions = suppliers.map(s => ({ value: s.idSupplier, label: s.companyName }));
+	const statusSelectOptions = STATUS_OPTIONS.map(s => ({ value: s, label: s }));
 
-	// We are loading if *either* context is loading
-	if (productContext.loading || supplierContext.loading) {
-		return <div className="text-center p-10">Loading data...</div>;
-	}
-
-	// Main fetch error
-	const fetchError = productContext.error || supplierContext.error;
-	if (fetchError && !productContext.loading && !supplierContext.loading) {
-		return <div className="text-red-500 text-center p-10">Error: {fetchError}</div>;
-	}
-
-	// Delete/status error (shown above table)
-	if (apiError && !isModalOpen) {
-		return <div className="text-red-500 text-center p-4">{apiError}</div>;
-	}
+	// Loading and Error States
+	if (isLoading) return <div className="text-center p-10 text-gray-600">Loading data...</div>;
+	if (fetchError && !isLoading) return <div className="text-red-600 text-center p-10">Error loading data: {fetchError}</div>;
 
 	return (
-		<div className="container mx-auto">
-			{/* Title and Add Button */}
-			<div className="flex justify-between items-center mb-6">
-				<h1 className="text-3xl font-bold text-gray-800">My Products</h1>
+		<div className="container mx-auto p-4 md:p-6">
+			{/* Page Header */}
+			<div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-800">My Products</h1>
 				<button
 					onClick={handleAddNew}
-					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-bold py-2 px-4 rounded-md transition duration-200"
+					className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out flex items-center space-x-1"
 				>
-					+ New Product
+					<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+  						<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+					</svg>
+					<span>New Product</span>
 				</button>
 			</div>
 
+			{/* Display API errors related to delete/status update */}
+			{apiError && !isModalOpen && (
+				<div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md text-center" role="alert">
+					{apiError}
+				</div>
+			)}
+
+
 			{/* Products Table */}
-			<div className="bg-[#FFFFFF] shadow-md rounded-lg overflow-hidden">
-				<table className="min-w-full divide-y divide-[#CBCBCB]">
-					<thead className="bg-[#EEEEEE]">
+			<div className="bg-[#FFFFFF] shadow-md rounded-lg overflow-x-auto">
+				<table className="min-w-full divide-y divide-[#EEEEEE]">
+					<thead className="bg-gray-50">
 						<tr>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Product Name</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Category</th>
-							{/* UPDATED: Title now refers to the base price */}
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Base Price (R$)</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Supplier</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Status</th>
-							<th className="py-3 px-4 text-left text-sm font-semibold text-[#777C6D] uppercase">Actions</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Product Name</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Category</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Base Price (R$)</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Supplier</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Status</th>
+							<th className="py-3 px-4 text-left text-xs font-semibold text-[#777C6D] uppercase tracking-wider">Actions</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-[#EEEEEE]">
-						{productContext.products.length === 0 ? (
+					<tbody className="bg-white divide-y divide-[#EEEEEE]">
+						{products.length === 0 ? (
 							<tr>
-								<td colSpan="6" className="text-center py-6 text-gray-500">No products found.</td>
+								<td colSpan="6" className="text-center py-6 text-gray-500">No products found. Add one to get started!</td>
 							</tr>
 						) : (
-							productContext.products.map(product => {
-								// UPDATED: Calculate the base price for display
+							products.map(product => {
 								const basePrice = getBasePrice(product.priceTiers);
-								
 								return (
-									<tr key={product.idProduct} className="hover:bg-gray-50">
-										<td className="py-4 px-4">{product.name}</td>
-										<td className="py-4 px-4">{product.category}</td>
-										{/* UPDATED: Display the base price */}
-										<td className="py-4 px-4">{basePrice.toFixed(2)}</td>
-										<td className="py-4 px-4">{product.supplierName}</td>
-										<td className="py-4 px-4">
-											<select
+									<tr key={product.idProduct} className="hover:bg-gray-50 transition duration-150 ease-in-out">
+										<td className="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{product.category || '-'}</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{basePrice.toFixed(2)}</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">{product.supplierName}</td>
+										<td className="py-4 px-4 whitespace-nowrap text-sm">
+											<SelectField
+												name={`status-${product.idProduct}`} // Unique name for each row's select
 												value={product.productStatus}
 												onChange={(e) => handleStatusChange(product.idProduct, e.target.value)}
-												className="text-xs p-1 rounded border border-[#CBCBCB]"
-											>
-												{STATUS_OPTIONS.map(status => (
-													<option key={status} value={status}>{status}</option>
-												))}
-											</select>
+												options={statusSelectOptions}
+												className="text-xs p-1 rounded border border-[#CBCBCB] w-full" // Removed mt-1, adjusted class
+												aria-label={`Status for ${product.name}`}
+											/>
 										</td>
-										<td className="py-4 px-4 space-x-2">
+										<td className="py-4 px-4 whitespace-nowrap text-sm space-x-2">
 											<button
 												onClick={() => handleEdit(product)}
-												className="text-sm bg-[#B7B89F] hover:bg-[#a7a88f] text-white py-1 px-3 rounded-md"
+												className="text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out"
+												aria-label={`Edit ${product.name}`}
 											>
 												Edit
 											</button>
 											<button
 												onClick={() => handleDelete(product.idProduct)}
-												className="text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-md"
+												className="text-red-600 hover:text-red-800 font-medium transition duration-150 ease-in-out"
+												aria-label={`Delete ${product.name}`}
 											>
 												Delete
 											</button>
@@ -280,162 +369,131 @@ const Product = () => {
 
 			{/* Create/Edit Modal */}
 			{isModalOpen && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30 overflow-y-auto p-4">
-					<div className="bg-[#FFFFFF] p-8 rounded-lg shadow-xl w-full max-w-2xl my-auto">
-						<h2 className="text-2xl font-bold mb-6 text-gray-800">
-							{selectedProduct ? 'Edit Product' : 'New Product'}
-						</h2>
+				// Modal container: no dark overlay, uses a subtle background difference if needed
+				// Use p-4 for padding on smaller screens, allowing scroll
+				<div className="fixed inset-0 z-40 overflow-y-auto bg-[#EEEEEE]/80 backdrop-blur-sm flex items-center justify-center p-4">
+					
+					{/* **** CORREÇÃO APLICADA AQUI ****
+					  Classes de animação removidas: 
+					  'transform', 'transition-all', 'duration-300', 'ease-out', 'scale-95', 'opacity-0', 'animate-fade-in-scale'
+					  O modal agora aparecerá instantaneamente.
+					*/}
+					<div className="bg-[#FFFFFF] p-6 rounded-lg shadow-xl w-full max-w-2xl border border-[#CBCBCB]">
+						
+						{/* Modal Header */}
+						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
+							<h2 className="text-xl font-semibold text-gray-800">
+								{selectedProduct ? 'Edit Product' : 'Create New Product'}
+							</h2>
+							<button onClick={closeModal} className="text-gray-400 hover:text-gray-600 focus:outline-none">
+								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+								</svg>
+							</button>
+						</div>
 
-						{/* Show form error */}
-						{apiError && (
-							<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-								{apiError}
-							</div>
-						)}
+						{/* Modal Body */}
+						<div className="mt-4">
+							{/* Form API Error */}
+							{apiError && (
+								<div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+									<p className="font-bold">Error</p>
+									<p>{apiError}</p>
+								</div>
+							)}
 
-						<form onSubmit={handleSubmit} className="space-y-4">
-
-							<div>
-								<label className="block text-sm font-medium text-gray-700">Product Name</label>
-								<input
-									type="text"
+							<form onSubmit={handleSubmit} className="space-y-4">
+								<InputField
+									label="Product Name"
 									name="name"
 									value={formData.name}
 									onChange={handleChange}
 									required
-									className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+									placeholder="e.g., Office Chair Model X"
 								/>
-							</div>
-
-							<div className="flex space-x-4">
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700">Category</label>
-									<input
-										type="text"
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<InputField
+										label="Category"
 										name="category"
 										value={formData.category}
 										onChange={handleChange}
-										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+										placeholder="e.g., Furniture"
 									/>
-								</div>
-								
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700">Supplier</label>
-									<select
+									<SelectField
+										label="Supplier"
 										name="supplierId"
 										value={formData.supplierId}
 										onChange={handleChange}
+										options={supplierOptions}
 										required
-										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm bg-white"
-									>
-										<option value="">-- Select a supplier --</option>
-										{supplierContext.suppliers.map(supplier => (
-											<option key={supplier.idSupplier} value={supplier.idSupplier}>
-												{supplier.companyName}
-											</option>
-										))}
-									</select>
+										placeholder="-- Select Supplier --"
+									/>
 								</div>
-							</div>
-							
-							{/* --- PRICE TIERS SECTION (NEW) --- */}
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-1">Price Tiers</label>
-								<div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-									{formData.priceTiers.map((tier, index) => (
-										<div key={index} className="flex items-center space-x-2">
-											<div className="flex-1">
-												<label className="text-xs text-gray-600">Min. Quantity</label>
-												<input
-													type="number"
-													name="minQuantity"
-													value={tier.minQuantity}
-													onChange={(e) => handleTierChange(index, e)}
-													required
-													min="1"
-													className="mt-1 block w-full px-2 py-1 border border-[#CBCBCB] rounded-md shadow-sm"
-												/>
-											</div>
-											<div className="flex-1">
-												<label className="text-xs text-gray-600">Price per Unit (R$)</label>
-												<input
-													type="number"
-													name="pricePerUnit"
-													value={tier.pricePerUnit}
-													onChange={(e) => handleTierChange(index, e)}
-													required
-													min="0.01"
-													step="0.01"
-													className="mt-1 block w-full px-2 py-1 border border-[#CBCBCB] rounded-md shadow-sm"
-												/>
-											</div>
-											<button
-												type="button"
-												onClick={() => removeTier(index)}
-												// Disable removal if it's the last tier
-												disabled={formData.priceTiers.length <= 1} 
-												className="mt-5 text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-md disabled:bg-red-300"
-											>
-												&times;
-											</button>
-										</div>
-									))}
-								</div>
-								<button
-									type="button"
-									onClick={addTier}
-									className="mt-2 text-sm bg-[#B7B89F] hover:bg-[#a7a88f] text-white py-1 px-3 rounded-md"
-								>
-									+ Add Tier
-								</button>
-							</div>
-							{/* --- END OF SECTION --- */}
 
-							<div className="flex space-x-4">
-								<div className="flex-1">
-									<label className="block text-sm font-medium text-gray-700">Status</label>
-									<select
-										name="productStatus"
-										value={formData.productStatus}
-										onChange={handleChange}
-										required
-										className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm bg-white"
-									>
-										{STATUS_OPTIONS.map(status => (
-											<option key={status} value={status}>{status}</option>
+								{/* Price Tiers Section */}
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										Price Tiers <span className="text-red-500">*</span>
+									</label>
+									<div className="space-y-2 max-h-48 overflow-y-auto pr-2 border border-[#EEEEEE] rounded-md p-3">
+										{formData.priceTiers.map((tier, index) => (
+											<PriceTierRow
+												key={index}
+												tier={tier}
+												index={index}
+												onChange={handleTierChange}
+												onRemove={removeTier}
+												canRemove={formData.priceTiers.length > 1}
+											/>
 										))}
-									</select>
+									</div>
+									<button
+										type="button"
+										onClick={addTier}
+										className="mt-2 text-sm text-[#777C6D] hover:text-[#5f6356] font-medium transition duration-150 ease-in-out flex items-center space-x-1"
+									>
+									 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+  										<path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+									</svg>
+										<span>Add Price Tier</span>
+									</button>
 								</div>
-							</div>
 
-							<div>
-								<label className="block text-sm font-medium text-gray-700">Description</label>
-								<textarea
+								<SelectField
+									label="Status"
+									name="productStatus"
+									value={formData.productStatus}
+									onChange={handleChange}
+									options={statusSelectOptions}
+									required
+								/>
+
+								<TextAreaField
+									label="Description"
 									name="description"
 									value={formData.description}
 									onChange={handleChange}
-									rows="3"
-									className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+									placeholder="Enter product details..."
 								/>
-							</div>
 
-							{/* Form Buttons */}
-							<div className="flex justify-end space-x-3 pt-4">
-								<button
-									type="button"
-									onClick={() => setIsModalOpen(false)}
-									className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-md"
-								>
-									Cancel
-								</button>
-								<button
-									type="submit"
-									className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-bold py-2 px-4 rounded-md"
-								>
-									{selectedProduct ? 'Update' : 'Save'}
-								</button>
-							</div>
-						</form>
+								{/* Modal Footer (Buttons) */}
+								<div className="flex justify-end space-x-3 pt-4 border-t border-[#EEEEEE] mt-6">
+									<button
+										type="button"
+										onClick={closeModal}
+										className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+									>
+										Cancel
+									</button>
+									<button
+										type="submit"
+										className="bg-[#777C6D] hover:bg-[#5f6356] text-white font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+									>
+										{selectedProduct ? 'Update Product' : 'Save Product'}
+									</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			)}
