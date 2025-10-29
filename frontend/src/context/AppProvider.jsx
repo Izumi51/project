@@ -2,6 +2,7 @@ import AuthProvider from './auth/AuthProvider';
 import ProductProvider from './product/ProductProvider';
 import SupplierProvider from './supplier/SupplierProvider';
 import BiddingProvider from './bidding/BiddingProvider';
+import MatchProvider from './match/MatchProvider';
 
 const AppProviders = ({ children }) => {
     return (
@@ -9,7 +10,9 @@ const AppProviders = ({ children }) => {
              <BiddingProvider>
                 <SupplierProvider>
                     <ProductProvider>
-                        {children}
+                        <MatchProvider>
+                            {children}
+                        </MatchProvider>
                     </ProductProvider>
                 </SupplierProvider> 
             </BiddingProvider> 

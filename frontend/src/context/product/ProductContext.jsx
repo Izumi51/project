@@ -1,13 +1,14 @@
 import { createContext } from 'react';
 
 const ProductContext = createContext({
-    // token: null,
-    // userName: null,
-    // userId: null,
-    // isAuthenticated: false,
-    // login: () => {},
-    // logout: () => {},
-    // register: () => {},
+    products: [],
+    loading: true,
+    error: null,
+    fetchProducts: () => {},
+    createProduct: async () => {},
+    updateProduct: async () => {},
+    deleteProduct: async () => {},
+    updateProductStatus: async () => {},
 });
 
 export default ProductContext;

@@ -1,13 +1,14 @@
 import { createContext } from 'react';
 
 const SupplierContext = createContext({
-    // token: null,
-    // userName: null,
-    // userId: null,
-    // isAuthenticated: false,
-    // login: () => {},
-    // logout: () => {},
-    // register: () => {},
+    suppliers: [],
+    loading: true,
+    error: null,
+    fetchSuppliers: () => { },
+    createSupplier: async () => { },
+    updateSupplier: async () => { },
+    deleteSupplier: async () => { },
+    updateSupplierStatus: async () => { },
 });
 
 export default SupplierContext;

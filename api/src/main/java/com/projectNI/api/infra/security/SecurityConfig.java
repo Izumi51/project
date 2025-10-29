@@ -64,6 +64,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/supplier/{id}").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/supplier/{id}/status").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/supplier/{id}").authenticated()
+
+                        // --- [NEW RULE] Match Endpoints ---
+                        // Requires authentication to see matches
+                        .requestMatchers(HttpMethod.GET, "/api/match/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
