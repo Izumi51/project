@@ -22,7 +22,7 @@ const Login = () => {
 	const { login, isAuthenticated } = useAuth();
 	const navigate = useNavigate();
 
-	// --- Client-Side Validation (from your old file) ---
+	// --- Client-Side Validation ---
 	// This provides a better UX by checking inputs before sending to the server.
 	const validateInputs = () => {
 		// Clear previous errors
@@ -177,7 +177,7 @@ const Login = () => {
 						</button>
 					</div>
 
-					{/* Links (from your old file)
+					{/* Links
 					<div className="text-sm text-center">
 						 NOTE: The "/forgot-password" route is commented out in main.jsx.
 						     You will need to uncomment it there for this link to work. 
@@ -189,7 +189,7 @@ const Login = () => {
 						</Link>
 					</div> */}
 					
-					{/* Divider (from your old file) */}
+					{/* Divider */}
 					<div className="relative my-4">
 						<div className="absolute inset-0 flex items-center">
 							<span className="w-full border-t border-[#CBCBCB]"></span>
@@ -199,18 +199,16 @@ const Login = () => {
 						</div>
 					</div>
 
-					{/* Sign Up Link (from your old file) */}
-					<p className="text-center text-sm text-gray-600">
+					{/* Sign Up Link */}
+					{/* <p className="text-center text-sm text-gray-600">
 						Não tem uma conta?{' '}
-						{/* NOTE: The "/register" route is commented out in your main.jsx.
-						     You will need to uncomment it there for this link to work. */}
 						<Link 
 							to="/register" 
 							className="font-medium text-[#777C6D] hover:text-[#5f6356] hover:underline"
 						>
 							Cadastre-se
 						</Link>
-					</p>
+					</p> */}
 
 				</form>
 			</div>
