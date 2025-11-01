@@ -53,7 +53,7 @@ const SupplierProvider = ({ children }) => {
     const updateSupplier = async (id, supplierData) => {
         try {
             // Calls: PUT /api/supplier/{id}
-            const response = await api.post(`/supplier/${id}`, supplierData);
+            const response = await api.post(`/supplier/update/${id}`, supplierData);
 
             // Updates the local state
             setSuppliers(prevSuppliers =>
@@ -69,7 +69,7 @@ const SupplierProvider = ({ children }) => {
     const deleteSupplier = async (id) => {
         try {
             // Calls: DELETE /api/supplier/{id}
-            await api.post(`/supplier/${id}`);
+            await api.post(`/supplier/delete/${id}`);
 
             // Removes from the local state
             setSuppliers(prevSuppliers =>
@@ -86,7 +86,7 @@ const SupplierProvider = ({ children }) => {
         try {
             // Calls: PUT /api/supplier/{id}/status
             // The DTO is { status: "NEW_STATUS" }
-            const response = await api.post(`/supplier/${id}/status`, { status });
+            const response = await api.post(`/supplier/update/status/${id}`, { status });
 
             // Updates the local state
             setSuppliers(prevSuppliers =>

@@ -46,7 +46,7 @@ public class BiddingController {
         return ResponseEntity.ok(bidding);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<BiddingResponseDTO> updateBidding(
             @PathVariable UUID id,
             @RequestBody BiddingRequestDTO biddingRequestDTO) {
@@ -56,7 +56,7 @@ public class BiddingController {
         return ResponseEntity.ok(updatedBidding);
     }
 
-    @PostMapping("/{id}/status")
+    @PostMapping("/update/status/{id}")
     public ResponseEntity<BiddingResponseDTO> updateBiddingStatus(
             @PathVariable UUID id,
             @RequestBody BiddingStatusUpdateDTO biddingStatusUpdateDTO) {
@@ -67,7 +67,7 @@ public class BiddingController {
 
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBidding(@PathVariable UUID id) {
         biddingService.deleteBidding(id);
         return ResponseEntity.noContent().build();

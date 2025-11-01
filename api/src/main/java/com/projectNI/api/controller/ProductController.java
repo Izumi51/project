@@ -45,7 +45,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<ProductResponseDTO> updateProduct(
             @PathVariable UUID id,
             @RequestBody ProductRequestDTO productRequestDTO) {
@@ -55,7 +55,7 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-    @PostMapping("/{id}/status")
+    @PostMapping("/update/status/{id}")
     public ResponseEntity<ProductResponseDTO> updateProductStatus(
             @PathVariable UUID id,
             @RequestBody ProductStatusUpdateDTO productStatusUpdateDTO) {
@@ -66,7 +66,7 @@ public class ProductController {
 
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

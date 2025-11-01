@@ -46,7 +46,7 @@ public class SupplierController {
         return ResponseEntity.ok(supplier);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/update/{id}")
     public ResponseEntity<SupplierResponseDTO> updateSupplier(
             @PathVariable UUID id,
             @RequestBody SupplierRequestDTO supplierRequestDTO) {
@@ -56,7 +56,7 @@ public class SupplierController {
         return ResponseEntity.ok(updatedSupplier);
     }
 
-    @PostMapping("/{id}/status")
+    @PostMapping("update/status/{id}")
     public ResponseEntity<SupplierResponseDTO> updateSupplierStatus(
             @PathVariable UUID id,
             @RequestBody SupplierStatusUpdateDTO supplierStatusUpdateDTO) {
@@ -67,7 +67,7 @@ public class SupplierController {
 
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable UUID id) {
         supplierService.deleteSupplier(id);
         return ResponseEntity.noContent().build();
