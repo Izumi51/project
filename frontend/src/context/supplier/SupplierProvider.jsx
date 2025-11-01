@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import SupplierContext from './SupplierContext';
 import api from '../../api/axios';
-
-// NOTE: We don't need 'useAuth' here because the SupplierController
-// does not require a userId to create a supplier, unlike the BiddingController.
+import { useAuth } from '../../hooks/auth/useAuth'; 
 
 const SupplierProvider = ({ children }) => {
     const [suppliers, setSuppliers] = useState([]);

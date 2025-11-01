@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import ProductContext from './ProductContext';
 import api from '../../api/axios';
+import { useAuth } from '../../hooks/auth/useAuth'; 
 
 const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
