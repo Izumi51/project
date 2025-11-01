@@ -7,6 +7,8 @@ const ProductProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const { isAuthenticated } = useAuth();
+
     // Function to fetch all products
     const fetchProducts = useCallback(async () => {
         setLoading(true);
@@ -24,8 +26,12 @@ const ProductProvider = ({ children }) => {
 
     // Load products when the provider is mounted
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        if (isAuthenticated) {
+            fetchProducts();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchProducts, isAuthenticated]);
 
     // Function to CREATE a new product
     const createProduct = async (productData) => {

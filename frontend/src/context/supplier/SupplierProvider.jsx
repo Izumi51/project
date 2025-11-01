@@ -10,6 +10,8 @@ const SupplierProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const { isAuthenticated } = useAuth();
+
     // Function to fetch all suppliers
     const fetchSuppliers = useCallback(async () => {
         setLoading(true);
@@ -27,8 +29,12 @@ const SupplierProvider = ({ children }) => {
 
     // Load suppliers when the provider is mounted
     useEffect(() => {
-        fetchSuppliers();
-    }, [fetchSuppliers]);
+        if (isAuthenticated) {
+            fetchSuppliers();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchSuppliers, isAuthenticated]);
 
     // Function to CREATE a new supplier
     const createSupplier = async (supplierData) => {

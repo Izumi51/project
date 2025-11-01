@@ -9,7 +9,7 @@ const BiddingProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Import the auth hook to get the userId
-    const { userId } = useAuth();
+    const { userId, isAuthenticated } = useAuth();
 
     // Function to fetch all biddings
     const fetchBiddings = useCallback(async () => {
@@ -28,8 +28,12 @@ const BiddingProvider = ({ children }) => {
 
     // Loads biddings when the provider is mounted
     useEffect(() => {
-        fetchBiddings();
-    }, [fetchBiddings]);
+        if (isAuthenticated) {
+            fetchBiddings();
+        } else {
+            setLoading(false);
+        }
+    }, [fetchBiddings, isAuthenticated]);
 
     // Function to CREATE a new bidding
     const createBidding = async (biddingData) => {
