@@ -54,7 +54,7 @@ const ProductProvider = ({ children }) => {
     const updateProduct = async (id, productData) => {
         try {
             // Calls: PUT /api/product/{id}
-            const response = await api.put(`/product/${id}`, productData);
+            const response = await api.post(`/product/${id}`, productData);
 
             // Updates the local state
             setProducts(prevProducts =>
@@ -70,7 +70,7 @@ const ProductProvider = ({ children }) => {
     const deleteProduct = async (id) => {
         try {
             // Calls: DELETE /api/product/{id}
-            await api.delete(`/product/${id}`);
+            await api.post(`/product/${id}`);
 
             // Removes from the local state
             setProducts(prevProducts =>
@@ -87,7 +87,7 @@ const ProductProvider = ({ children }) => {
         try {
             // Calls: PUT /api/product/{id}/status
             // The DTO is { status: "NEW_STATUS" }
-            const response = await api.put(`/product/${id}/status`, { status });
+            const response = await api.post(`/product/${id}/status`, { status });
 
             // Updates the local state
             setProducts(prevProducts =>

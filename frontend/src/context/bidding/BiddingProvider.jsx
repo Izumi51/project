@@ -55,7 +55,7 @@ const BiddingProvider = ({ children }) => {
     const updateBidding = async (id, biddingData) => {
         try {
             // Calls PUT /api/bidding/{id}
-            const response = await api.put(`/bidding/${id}`, biddingData);
+            const response = await api.post(`/bidding/${id}`, biddingData);
 
             // Updates the local state
             setBiddings(prevBiddings =>
@@ -71,7 +71,7 @@ const BiddingProvider = ({ children }) => {
     const deleteBidding = async (id) => {
         try {
             // Calls DELETE /api/bidding/{id}
-            await api.delete(`/bidding/${id}`);
+            await api.post(`/bidding/${id}`);
 
             // Removes from the local state
             setBiddings(prevBiddings =>
@@ -88,7 +88,7 @@ const BiddingProvider = ({ children }) => {
         try {
             // Calls PUT /api/bidding/{id}/status
             // The DTO is { status: "NEW_STATUS" }
-            const response = await api.put(`/bidding/${id}/status`, { status });
+            const response = await api.post(`/bidding/${id}/status`, { status });
 
             // Updates the local state
             setBiddings(prevBiddings =>
