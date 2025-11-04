@@ -32,6 +32,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        // OPTIONS(preflight)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Auth endpoints - Permitted for everyone
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").denyAll()

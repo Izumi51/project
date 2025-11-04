@@ -20,7 +20,10 @@ public class CorsConfig {
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://project-lac-pi.vercel.app",
+                "http://localhost:5173"
+        ));
 
         configuration.setAllowCredentials(true);
 
