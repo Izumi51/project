@@ -46,15 +46,17 @@ const Home = () => {
 	const fetchError = biddingsError || productsError || suppliersError;
 
 	// Get the last 3 biddings (or fewer if there aren't 3)
-	const recentBiddings = biddings
-		.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate)) // Sort by date (most recent first)
-		.slice(0, 3)
-		.map(b => ({ // Format for the RecentListItem component
-			id: b.idBidding,
-			name: b.name,
-			subText: `Product: ${b.productBidding} | Qty: ${b.quantity}`,
-			status: b.biddingStatus
-		}));
+	const recentBiddings = Array.isArray(biddings) 
+  ? [...biddings]
+      .sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate))
+      .slice(0, 3)
+      .map(b => ({
+        id: b.idBidding,
+        name: b.name,
+        subText: `Product: ${b.productBidding} | Qty: ${b.quantity}`,
+        status: b.biddingStatus
+      }))
+  : []; 
 
 	return (
 		<div className="container mx-auto p-4 md:p-6">
