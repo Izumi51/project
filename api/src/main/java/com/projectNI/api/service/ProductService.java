@@ -32,16 +32,20 @@ public class ProductService {
     @Transactional
     public ProductResponseDTO createProduct(ProductRequestDTO dto) {
         // Finds the Supplier
-        Supplier supplier = supplierRepository.findById(dto.supplierId())
-                .orElseThrow(() -> new EntityNotFoundException("Supplier not found with ID: " + dto.supplierId()));
+        Supplier supplier = supplierRepository.findById(dto.idSupplier())
+                .orElseThrow(() -> new EntityNotFoundException("Supplier not found with ID: " + dto.idSupplier()));
 
         Product product = new Product();
         product.setName(dto.name());
         product.setCategory(dto.category());
         product.setDescription(dto.description());
-        // product.setPricePerUnit(dto.pricePerUnit());
+
+        // Novos campos
+        product.setAvailableQuantity(dto.availableQuantity());
+        product.setUnitLogisticCost(dto.unitLogisticCost());
+
         product.setSupplier(supplier); // Associates the Supplier
-        product.setProductStatus(dto.productStatus() != null ? dto.productStatus() : com.projectNI.api.model.ProductStatus.SELLING); // Define um status padrão
+        product.setProductStatus(com.projectNI.api.model.ProductStatus.SELLING); // Define um status padrão
 
         if (dto.priceTiers() != null) {
             List<PriceTier> tiers = dto.priceTiers().stream()
@@ -83,19 +87,21 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + id));
 
         // Finds the new Supplier if the ID changed
-        if (!product.getSupplier().getIdSupplier().equals(dto.supplierId())) {
-            Supplier supplier = supplierRepository.findById(dto.supplierId())
-                    .orElseThrow(() -> new EntityNotFoundException("Supplier not found with ID: " + dto.supplierId()));
+        if (!product.getSupplier().getIdSupplier().equals(dto.idSupplier())) {
+            Supplier supplier = supplierRepository.findById(dto.idSupplier())
+                    .orElseThrow(() -> new EntityNotFoundException("Supplier not found with ID: " + dto.idSupplier()));
             product.setSupplier(supplier);
         }
 
         product.setName(dto.name());
         product.setCategory(dto.category());
         product.setDescription(dto.description());
-        // product.setPricePerUnit(dto.pricePerUnit());
-        product.setProductStatus(dto.productStatus());
 
-        // Clear old tiers (thanks to orphanRemoval=true, they will be deleted from the DB)
+        // Novos campos
+        product.setAvailableQuantity(dto.availableQuantity());
+        product.setUnitLogisticCost(dto.unitLogisticCost());
+
+        // Clear old tiers
         product.getPriceTiers().clear();
         if (dto.priceTiers() != null) {
             List<PriceTier> newTiers = dto.priceTiers().stream()
@@ -143,7 +149,8 @@ public class ProductService {
                 product.getIdProduct(),
                 product.getName(),
                 product.getCategory(),
-                // product.getPricePerUnit(),
+                product.getAvailableQuantity(),
+                product.getUnitLogisticCost(),
                 tierDTOs,
                 product.getDescription(),
                 product.getProductStatus(),
