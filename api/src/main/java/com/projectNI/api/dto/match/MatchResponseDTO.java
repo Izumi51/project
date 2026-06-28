@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record MatchResponseDTO(
-        UUID productId,
+        UUID idProduct,
         String productName,
-        UUID supplierId,
-        String supplierName,
+        UUID idSupplier,
+        String companyName,
         BigDecimal pricePerUnit,
-        int biddingQuantity,
-        BigDecimal totalCost // (pricePerUnit * biddingQuantity)
+        int quantityBought,
+        BigDecimal totalProductCost,      // Custo apenas dos produtos (Preço * Qtd)
+        BigDecimal unitLogisticCost,      // Custo logístico unitário
+        BigDecimal totalLogisticCost,     // Custo logístico total (Logística * Qtd)
+        BigDecimal finalTotalCost         // Custo Final (Produto + Logística)
 ) {
 }
