@@ -1,6 +1,7 @@
 package com.projectNI.api.dto.supplier;
 
 import com.projectNI.api.model.SupplierStatus;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record SupplierResponseDTO(
@@ -10,6 +11,7 @@ public record SupplierResponseDTO(
         String contactName,
         String phone,
         String email,
-        SupplierStatus supplierStatus
+        SupplierStatus supplierStatus,
+        BigDecimal fixedCost
 ) {
 }

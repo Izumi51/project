@@ -40,7 +40,6 @@ public class ProductService {
         product.setCategory(dto.category());
         product.setDescription(dto.description());
 
-        // Novos campos
         product.setAvailableQuantity(dto.availableQuantity());
         product.setUnitLogisticCost(dto.unitLogisticCost());
 

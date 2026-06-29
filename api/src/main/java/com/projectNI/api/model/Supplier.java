@@ -3,6 +3,7 @@ package com.projectNI.api.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,20 +41,30 @@ public class Supplier {
     private SupplierStatus supplierStatus;
 
     /**
-        The @OneToMany annotation defines the relationship.
-        mappedBy = "supplier": This is crucial. It tells JPA that the 'supplier' field
-        in the Product entity is the owner of this relationship.
-        This prevents a second join table from being created.
+     Custo fixo (de ativação) cobrado quando este fornecedor é selecionado
+     na licitação, independentemente da quantidade comprada. Representa o
+     frete fixo / taxa administrativa incorporada à função objetivo do
+     modelo MILP (termo CustoFixo_s × Y_s) resolvido pelo Google OR-Tools.
+     Default 0 para não quebrar fornecedores já cadastrados sem esse valor.
+     */
+    @Column(name = "fixed_cost", precision = 10, scale = 2, nullable = false)
+    private BigDecimal fixedCost = BigDecimal.ZERO;
 
-        cascade = CascadeType.ALL: This means that persistence actions (save, update, delete)
-        on a Supplier will cascade to its associated Products.
-        For example, if you delete a supplier, all of its products
-        will be deleted too. Use with caution.
+    /**
+     The @OneToMany annotation defines the relationship.
+     mappedBy = "supplier": This is crucial. It tells JPA that the 'supplier' field
+     in the Product entity is the owner of this relationship.
+     This prevents a second join table from being created.
 
-        orphanRemoval = true: If you remove a product from the supplier's list of products
-        (e.g., supplier.getProducts().remove(someProduct)), that
-        product will be deleted from the database.
-    */
+     cascade = CascadeType.ALL: This means that persistence actions (save, update, delete)
+     on a Supplier will cascade to its associated Products.
+     For example, if you delete a supplier, all of its products
+     will be deleted too. Use with caution.
+
+     orphanRemoval = true: If you remove a product from the supplier's list of products
+     (e.g., supplier.getProducts().remove(someProduct)), that
+     product will be deleted from the database.
+     */
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Product> products;
 }

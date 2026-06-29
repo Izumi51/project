@@ -36,6 +36,7 @@ public class SupplierService {
         supplier.setPhone(dto.phone());
         supplier.setEmail(dto.email());
         supplier.setSupplierStatus(dto.supplierStatus() != null ? dto.supplierStatus() : SupplierStatus.ACTIVE); // Default status
+        supplier.setFixedCost(dto.fixedCost() != null ? dto.fixedCost() : java.math.BigDecimal.ZERO);
 
         Supplier savedSupplier = supplierRepository.save(supplier);
         return toResponseDTO(savedSupplier);
@@ -71,6 +72,7 @@ public class SupplierService {
         supplier.setPhone(dto.phone());
         supplier.setEmail(dto.email());
         supplier.setSupplierStatus(dto.supplierStatus());
+        supplier.setFixedCost(dto.fixedCost() != null ? dto.fixedCost() : java.math.BigDecimal.ZERO);
 
         Supplier updatedSupplier = supplierRepository.save(supplier);
         return toResponseDTO(updatedSupplier);
@@ -105,7 +107,8 @@ public class SupplierService {
                 supplier.getContactName(),
                 supplier.getPhone(),
                 supplier.getEmail(),
-                supplier.getSupplierStatus()
+                supplier.getSupplierStatus(),
+                supplier.getFixedCost()
         );
     }
 }

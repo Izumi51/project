@@ -16,7 +16,7 @@ public record ProductResponseDTO(
         List<PriceTierDTO> priceTiers,
         String description,
         ProductStatus productStatus,
-        UUID supplierId,
+        UUID idSupplier,
         String supplierName
 ) {
 }
