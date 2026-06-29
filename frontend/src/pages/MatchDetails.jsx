@@ -1,146 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import api from '../api/axios'; // Imports the axios instance
-
-// --- Detail Card Component ---
-const DetailCard = ({ title, children }) => (
-    <div className="bg-white shadow-md rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-5 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
-        </div>
-        <div className="p-5 space-y-4">
-            {children}
-        </div>
-    </div>
-);
-
-// --- Detail Item Component ---
-const DetailItem = ({ label, value }) => (
-    <div>
-        <span className="text-sm text-gray-500 block">{label}</span>
-        <span className="text-base text-gray-900 font-medium">{value || '-'}</span>
-    </div>
-);
+import React from 'react';
+import { useMatch } from '../hooks/match/useMatch';
 
 const MatchDetails = () => {
-    const { productId, supplierId } = useParams();
-    const navigate = useNavigate();
+    const { matchData } = useMatch();
 
-    const [product, setProduct] = useState(null);
-    const [supplier, setSupplier] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // Função auxiliar para formatação de moeda
+    const formatCurrency = (value) => 
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                // Fetch product details
-                const productResponse = await api.get(`/product/${productId}`);
-                setProduct(productResponse.data);
-
-                // Fetch supplier details
-                const supplierResponse = await api.get(`/supplier/${supplierId}`);
-                setSupplier(supplierResponse.data);
-
-            } catch (err) {
-                setError(err.message || 'Failed to fetch details.');
-                console.error("Error fetching details:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (productId && supplierId) {
-            fetchData();
-        }
-    }, [productId, supplierId]);
-
-    if (loading) return <div className="text-center p-10 text-gray-600">Loading details...</div>;
-
-    if (error) return (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-md shadow-md" role="alert">
-            <p className="font-bold">Erro carregando detalhes</p>
-            <p>{error}</p>
-        </div>
-    );
-
-    if (!product || !supplier) return <div className="text-center p-10 text-gray-500">Nenhuma informação encontrada.</div>;
-
-    // Sort product price tiers
-    const sortedTiers = product.priceTiers ? [...product.priceTiers].sort((a, b) => a.minQuantity - b.minQuantity) : [];
+    if (!matchData || !matchData.allocations) {
+        return (
+            <div className="flex justify-center items-center h-64 text-gray-500">
+                <p>Carregando ou sem resultados...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="container mx-auto p-4 md:p-6">
-            {/* Page Header */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#CBCBCB]">
-                <div className="flex items-center">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Detalhes do Match</h1>
-                </div>
-                <button
-                    onClick={() => navigate(-1)} // Go back to the previous page (Match)
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out"
+        <div className="p-6 max-w-7xl mx-auto space-y-8">
+            {/* Cabeçalho */}
+            <div className="flex items-center gap-4">
+                <button 
+                    onClick={() => window.history.back()}
+                    className="text-sm bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition-colors"
                 >
-                    &larr; Voltar para Matches
+                    ← Voltar
                 </button>
+                <h1 className="text-2xl font-bold text-gray-800">Detalhes da Otimização</h1>
             </div>
 
-            {/* Details Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                {/* Product Details Card */}
-                <DetailCard title="Detalhes do Produto">
-                    <DetailItem label="Nome do Produto" value={product.name} />
-                    <DetailItem label="Categoria" value={product.category} />
-                    <DetailItem label="Status" value={product.productStatus} />
-                    <div>
-                        <span className="text-sm text-gray-500 block">Descrição</span>
-                        <p className="text-base text-gray-900 font-medium">{product.description || '-'}</p>
+            {/* 1. Cards de Resumo */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    { label: 'Total de Itens', value: matchData.totalItemsCost },
+                    { label: 'Total de Frete', value: matchData.totalLogisticCost },
+                    { label: 'Custo Fixo', value: matchData.totalFixedCost },
+                    { label: 'Custo Final', value: matchData.grandTotalCost, highlight: true }
+                ].map((card, idx) => (
+                    <div key={idx} className={`p-5 rounded-lg border shadow-sm ${card.highlight ? 'bg-blue-600 text-white' : 'bg-white'}`}>
+                        <p className={`text-sm ${card.highlight ? 'text-blue-100' : 'text-gray-500'}`}>{card.label}</p>
+                        <p className="text-xl font-bold">{formatCurrency(card.value)}</p>
                     </div>
+                ))}
+            </div>
 
-                    {/* Price Tiers Table */}
-                    <div>
-                        <span className="text-sm text-gray-500 block mb-2">Preços</span>
-                        <div className="border border-gray-200 rounded-lg overflow-hidden">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Quantidade Mínima</th>
-                                        <th className="py-2 px-3 text-left text-xs font-semibold text-[#777C6D] uppercase">Preço por Unidade</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {sortedTiers.length > 0 ? (
-                                        sortedTiers.map(tier => (
-                                            <tr key={tier.minQuantity}>
-                                                <td className="py-3 px-3 text-sm text-gray-700">{tier.minQuantity}</td>
-                                                <td className="py-3 px-3 text-sm text-gray-700">R$ {tier.pricePerUnit.toFixed(2)}</td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="2" className="py-3 px-3 text-sm text-gray-500 text-center">Sem Preços Disponíveis.</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+            {/* 2. Tabela de Alocações */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-5 border-b border-gray-100">
+                    <h3 className="text-lg font-semibold text-gray-800">Alocações de Produtos</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-gray-50 text-gray-600 uppercase font-medium">
+                            <tr>
+                                <th className="px-6 py-4">Produto</th>
+                                <th className="px-6 py-4">Fornecedor</th>
+                                <th className="px-6 py-4">Qtd</th>
+                                <th className="px-6 py-4">Custo Total</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {matchData.allocations.map((item, index) => (
+                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-6 py-4 font-medium">{item.name}</td>
+                                    <td className="px-6 py-4">{item.companyName}</td>
+                                    <td className="px-6 py-4">{item.quantityBought}</td>
+                                    <td className="px-6 py-4 font-semibold">{formatCurrency(item.finalTotalCost)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* 3. Fornecedores Ativados */}
+            <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Fornecedores Ativados</h3>
+                <div className="grid gap-3">
+                    {matchData.activatedSuppliers.map((supplier) => (
+                        <div key={supplier.idSupplier} className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <span className="font-medium text-gray-700">{supplier.companyName}</span>
+                            <span className="text-sm text-gray-500">Frete Fixo: {formatCurrency(supplier.fixedCost)}</span>
                         </div>
-                    </div>
-                </DetailCard>
-
-                {/* Supplier Details Card */}
-                <DetailCard title="Supplier Details">
-                    <DetailItem label="Nome da Empresa" value={supplier.companyName} />
-                    <DetailItem label="CNPJ" value={supplier.cnpj} />
-                    <DetailItem label="Nome de Contato" value={supplier.contactName} />
-                    <DetailItem label="Telefone" value={supplier.phone} />
-                    <DetailItem label="Email" value={supplier.email} />
-                    <DetailItem label="Status" value={supplier.supplierStatus} />
-                </DetailCard>
+                    ))}
+                </div>
             </div>
         </div>
     );
 };
 
-export default MatchDetails;
+export default MatchDetails;    

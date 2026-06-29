@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import MatchContext from '../../context/match/MatchContext';
+import { MatchContext } from '../../context/match/MatchContext';
 
 /**
     Custom hook to access the Match context.

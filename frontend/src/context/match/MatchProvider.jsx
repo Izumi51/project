@@ -1,40 +1,39 @@
-import { useState, useCallback } from 'react';
-import MatchContext from './MatchContext';
+import React, { useState, useCallback, useMemo } from 'react';
+import { MatchContext } from './MatchContext';
 import api from '../../api/axios';
 
 const MatchProvider = ({ children }) => {
-    const [matches, setMatches] = useState([]);
-    const [loading, setLoading] = useState(false); // Initially not loading
-    const [error, setError] = useState(null);
+    const [matchData, setMatchData] = useState({
+        status: '',
+        allocations: [],
+        activatedSuppliers: [],
+        totalItemsCost: 0,
+        totalLogisticCost: 0,
+        totalFixedCost: 0,
+        grandTotalCost: 0
+    });
+    const [loading, setLoading] = useState(false);
 
-    // Function to fetch matches for a specific bidding ID
-    const fetchMatches = useCallback(async (biddingId) => {
-        if (!biddingId) {
-            setMatches([]); // Clear matches if no bidding is selected
-            return;
-        }
+    const fetchMatch = useCallback(async (biddingId) => {
         setLoading(true);
-        setError(null);
-        setMatches([]); // Clear previous matches before fetching new ones
         try {
-            // Calls the endpoint: GET /api/match/{biddingId}
             const response = await api.get(`/match/${biddingId}`);
-            setMatches(response.data); // response.data should be List<MatchResponseDTO>
-        } catch (err) {
-            setError(err.message || `Error fetching matches for bidding ${biddingId}`);
-            console.error("Error fetching matches:", err);
+            setMatchData(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar otimização:", error);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, []); 
+
+    const value = useMemo(() => ({ 
+        matchData, 
+        fetchMatch, 
+        loading 
+    }), [matchData, fetchMatch, loading]);
 
     return (
-        <MatchContext.Provider value={{
-            matches,
-            loading,
-            error,
-            fetchMatches
-        }}>
+        <MatchContext.Provider value={value}>
             {children}
         </MatchContext.Provider>
     );

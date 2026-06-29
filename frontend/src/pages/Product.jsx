@@ -4,12 +4,14 @@ import { useSupplier } from '../hooks/supplier/useSupplier';
 
 // DTO initial state
 const DTO_INITIAL_FIELDS = {
-	name: '',
-	category: '',
-	supplierId: '',
-	description: '',
-	productStatus: 'SELLING',
-	priceTiers: [{ minQuantity: 1, pricePerUnit: 0.00 }]
+  name: '',
+  category: '',
+  idSupplier: '',
+  description: '',
+  availableQuantity: 0,
+  unitLogisticCost: 0.00,
+  productStatus: 'SELLING',
+  priceTiers: [{ minQuantity: 1, pricePerUnit: 0.00 }]
 };
 
 // Status options from backend enum
@@ -173,7 +175,7 @@ const Product = () => {
 		setFormData({
 			name: product.name,
 			category: product.category,
-			supplierId: product.supplierId,
+			idSupplier: product.idSupplier,
 			description: product.description,
 			productStatus: product.productStatus,
 			priceTiers: sortedTiers.length > 0 ? sortedTiers : DTO_INITIAL_FIELDS.priceTiers
@@ -238,34 +240,35 @@ const Product = () => {
 
 	// Form Submission
 	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setApiError(null);
+  e.preventDefault();
+  setApiError(null);
 
-		// Validation
-		if (!formData.supplierId) return setApiError('Forncedor é Obrigatório');
-		if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('Pelo Menos um Preço é Obrigatório.');
-		if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('A Quantidade Mínima é 1 ou mais.');
-		if (!formData.priceTiers.some(t => t.minQuantity === 1)) return setApiError('Um Preço para a Quantidade Mínima 1 é Obrigatório.');
-		const quantities = formData.priceTiers.map(t => t.minQuantity);
-        if (new Set(quantities).size !== quantities.length) return setApiError('Quantidades Mínimas para os Preços devem ser Únicas.');
+  // VALIDATION
+  if (!formData.idSupplier) return setApiError('Fornecedor é Obrigatório');
+  if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('Pelo Menos um Preço é Obrigatório.');
+  if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('A Quantidade Mínima é 1 ou mais.');
+  
+  const quantities = formData.priceTiers.map(t => t.minQuantity);
+  if (new Set(quantities).size !== quantities.length) return setApiError('Quantidades Mínimas para os Preços devem ser Únicas.');
 
-		// Prepare data (ensure numbers are numbers) - already handled by handleTierChange
-		const submissionData = {
-			...formData,
-			// Ensure supplierId is correct if needed, already set via handleChange
-		};
+  // Parse numeric types explicitly to keep Backend numbers clean
+  const submissionData = {
+    ...formData,
+    availableQuantity: parseInt(formData.availableQuantity, 10) || 0,
+    unitLogisticCost: parseFloat(formData.unitLogisticCost) || 0.00
+  };
 
-		try {
-			if (selectedProduct) {
-				await updateProduct(selectedProduct.idProduct, submissionData);
-			} else {
-				await createProduct(submissionData);
-			}
-			closeModal(); // Close modal on success
-		} catch (err) {
-			setApiError(err.message || 'An error occurred while saving the product.');
-		}
-	};
+  try {
+    if (selectedProduct) {
+      await updateProduct(selectedProduct.idProduct, submissionData);
+    } else {
+      await createProduct(submissionData);
+    }
+    closeModal();
+  } catch (err) {
+    setApiError(err.message || 'An error occurred while saving the product.');
+  }
+};
 
 	// Helper to get base price for table display
 	const getBasePrice = (tiers) => {
@@ -404,6 +407,30 @@ const Product = () => {
 									required
 									placeholder="ex.: Cadeira Escolar"
 								/>
+
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<InputField
+										label="Quantidade em Estoque"
+										name="availableQuantity"
+										type="number"
+										min="0"
+										value={formData.availableQuantity}
+										onChange={handleChange}
+										required
+									/>
+
+									<InputField
+										label="Custo Logístico Unitário (R$)"
+										name="unitLogisticCost"
+										type="number"
+										min="0"
+										step="0.01"
+										value={formData.unitLogisticCost}
+										onChange={handleChange}
+										required
+									/>
+								</div>
+
 								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<InputField
 										label="Categoria"
@@ -414,8 +441,8 @@ const Product = () => {
 									/>
 									<SelectField
 										label="Fornecedor"
-										name="supplierId"
-										value={formData.supplierId}
+										name="idSupplier"
+										value={formData.idSupplier}
 										onChange={handleChange}
 										options={supplierOptions}
 										required
