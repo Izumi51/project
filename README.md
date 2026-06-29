@@ -1,88 +1,75 @@
-# ProjectNI
+# Sistema de Otimização de Licitações
 
-`ProjectNI` é uma aplicação web full-stack projetada para gerenciamento de compras B2B (business-to-business) e cadeia de suprimentos. Ele permite que usuários (clientes) criem solicitações de licitação (Biddings) para produtos e quantidades que necessitam.
-
-O sistema então compara essas licitações com um banco de dados de fornecedores (`Suppliers`) e seus inventários de produtos (`Products`), identificando as melhores ofertas de custo-benefício através de um motor de "Match" (combinação).
+O `Sistema de Otimização de Licitações` é uma plataforma web *full-stack* desenvolvida para automatizar e otimizar processos de seleção de fornecedores em licitações públicas e privadas. Ao contrário de abordagens tradicionais baseadas em algoritmos gulosos (que selecionam apenas o menor preço unitário por item), o sistema utiliza um **motor de otimização matemática** para minimizar o custo total de aquisição, considerando simultaneamente restrições complexas como custos fixos de frete, limites de capacidade e faixas de desconto por volume (*price tiers*).
 
 Este projeto é dividido em duas partes principais:
-* `api/`: Um backend RESTful construído com Spring Boot.
-* `frontend/`: Um aplicativo de página única (SPA) construído com React.
+
+* `api/`: Backend robusto em Java com Spring Boot, integrado ao **Google OR-Tools** para resolução de problemas de Programação Linear Inteira Mista (MILP).
+ 
+* `frontend/`: *Single Page Application* (SPA) desenvolvida em React para visualização intuitiva e auditoria dos cenários otimizados.
 
 ## Funcionalidades Principais
 
-* **Autenticação de Usuário:** Login e registro seguros usando Spring Security e tokens JWT.
-* **Gerenciamento de Licitações (Bidding):** Clientes podem criar, ler, atualizar e excluir suas solicitações de licitação.
-* **Gerenciamento de Fornecedores (Supplier):** Operações CRUD para gerenciar fornecedores.
-* **Gerenciamento de Produtos (Product):** Operações CRUD para gerenciar produtos, incluindo um sistema complexo de faixas de preço (`PriceTier`) com base na quantidade.
-* **Motor de Combinação (Match Engine):** A funcionalidade principal. Compara a quantidade e categoria de uma licitação com todas as `PriceTiers` aplicáveis para encontrar as 3 melhores ofertas de custo total.
-* **Dashboard:** Uma página inicial (`Home`) que resume o total de licitações, produtos e fornecedores.
-* **Navegação Protegida:** As rotas principais (Bidding, Supplier, Product, Match) são protegidas e exigem login.
+1. **Motor de Otimização (Match Engine):** O núcleo do sistema. Utiliza a biblioteca Google OR-Tools (via JNI) para processar o Problema de Seleção de Fornecedores (SSP), garantindo a combinação de menor custo global com conformidade integral às restrições logísticas.
+
+2. **Modelagem de Faixas de Preço (Price Tiers):** Cadastro flexível de propostas onde preços variam conforme volumes mínimos e máximos, modelando descontos por escala e capacidade de estoque.
+
+3. **Gestão de Licitações (Bidding) e Fornecedores:** Operações completas para administrar editais, fornecedores e seus respectivos custos fixos de frete.
+ 
+4. **Auditoria de Decisão:** Interface dedicada (*MatchDetails*) que exibe a composição do custo (itens vs. frete) e justifica a adjudicação, essencial para a transparência e conformidade com a Lei n.º 14.133/2021.
+ 
+5. **Segurança e Performance:** Autenticação JWT, arquitetura desacoplada e performance otimizada para resolver problemas complexos em milissegundos.
 
 ## Tecnologias Utilizadas
 
 ### Backend (`api/`)
 
-* **Java 25**
-* **Spring Boot**
-* **Spring Security** (com autenticação JWT)
-* **Spring Data JPA** (Hibernate)
-* **PostgreSQL**
-* **Maven**
-* **Lombok**
+* **Java 25 & Spring Boot**
+* **Google OR-Tools** (Motor de otimização MILP) 
+* **Spring Data JPA** & **PostgreSQL**
+* **Maven** (Gerenciamento de dependências)
 
 ### Frontend (`frontend/`)
 
-* **React** (v19)
-* **Vite**
-* **React Router** (v7)
-* **Tailwind CSS**
-* **React Context API** (para gerenciamento de estado)
-* **Axios** (para chamadas de API)
+* **React** (v19) & **Vite**
+* **Axios** (Integração com API RESTful)
+* **Tailwind CSS** (Estilização)
+* **Context API** (Gerenciamento de estado global)
 
-## Começando
+## Como começar
 
 ### Pré-requisitos
 
 * JDK 25 ou superior
 * Maven 3.x
 * Node.js 18 ou superior
-* Um banco de dados PostgreSQL em execução
+* PostgreSQL
 
 ### 1. Configuração do Backend (API)
 
-1.  **Navegue até o diretório da API:**
-    ```sh
-    cd api
-    ```
+1. Navegue até `api/` e configure o `src/main/resources/application.properties` com suas credenciais do PostgreSQL.
 
-2.  **Configuração do Banco de Dados:**
-    * Crie um novo banco de dados no PostgreSQL (ex: `projectNI`).
-    * Abra `src/main/resources/application.properties`.
-    * Atualize `spring.datasource.url`, `spring.datasource.username` e `spring.datasource.password` com suas credenciais do PostgreSQL.
-    * Atualize `api.security.token.secret` com uma chave secreta forte para JWT.
+2. O sistema requer uma instância do banco de dados configurada para as entidades `Bidding`, `Product`, `Supplier` e `PriceTier`.
 
-3.  **Execute a Aplicação:**
-    ```sh
+3. Execute a aplicação:
+```sh
     ./mvnw spring-boot:run
-    ```
-    A API estará em execução em `http://localhost:8080`.
+```
 
 ### 2. Configuração do Frontend
 
-1.  **Navegue até o diretório do frontend (em um novo terminal):**
-    ```sh
-    cd frontend
-    ```
+1. Navegue até `frontend/`.
 
-2.  **Instale as Dependências:**
-    ```sh
+2. Instale as dependências:
+```sh
     npm install
-    ```
+```
 
-3.  **Execute o Servidor de Desenvolvimento:**
-    ```sh
+3. Inicie o servidor de desenvolvimento:
+```sh
     npm run dev
-    ```
-    O frontend estará acessível em `http://localhost:5173` (ou a porta indicada pelo Vite).
+```
 
-4.  **Configuração da API:** O frontend está configurado para se comunicar com `http://localhost:8080/api/`. Se o seu backend estiver em uma porta diferente, atualize o `baseURL` em `frontend/src/api/axios.jsx`.
+## Diferencial Técnico
+
+A plataforma resolve o *Supplier Selection Problem* (SSP) como um modelo de Programação Linear Inteira Mista (MILP). O solver SCIP, integrado ao backend via JNI, avalia milhares de combinações de custos de frete e restrições de capacidade simultaneamente, superando as limitações de algoritmos gulosos rudimentares e gerando economia real em processos licitatórios.
