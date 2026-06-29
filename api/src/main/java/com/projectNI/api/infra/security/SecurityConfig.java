@@ -36,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Auth endpoints - Permitted for everyone
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register").denyAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         // Keep these commented out in controller, in case you enable them later
                         //.requestMatchers(HttpMethod.POST, "/api/auth/otp/request").permitAll()
                         //.requestMatchers(HttpMethod.POST, "/api/auth/otp/verify").permitAll()

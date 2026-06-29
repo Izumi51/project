@@ -30,20 +30,17 @@ public class BiddingService {
 
     @Transactional
     public BiddingResponseDTO createBidding(BiddingRequestDTO dto, UUID userId) {
-        // Finds the user who is creating the bidding
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
-        // Creates the new Bidding entity
         Bidding bidding = new Bidding();
         bidding.setName(dto.name());
         bidding.setDescription(dto.description());
         bidding.setProductBidding(dto.productBidding());
         bidding.setQuantity(dto.quantity());
         bidding.setCategory(dto.category());
-        bidding.setUser(user); // Associates the user with the bidding
-
-        // @PrePersist will handle requestDate and biddingStatus
+        bidding.setMaxDesiredPrice(dto.maxDesiredPrice());
+        bidding.setUser(user);
 
         Bidding savedBidding = biddingRepository.save(bidding);
         return toResponseDTO(savedBidding);
@@ -69,12 +66,12 @@ public class BiddingService {
         Bidding bidding = biddingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Bidding not found with ID: " + id));
 
-        // Updates the fields
         bidding.setName(dto.name());
         bidding.setDescription(dto.description());
         bidding.setProductBidding(dto.productBidding());
         bidding.setQuantity(dto.quantity());
         bidding.setCategory(dto.category());
+        bidding.setMaxDesiredPrice(dto.maxDesiredPrice()); // Atualiza o teto de preço
 
         Bidding updatedBidding = biddingRepository.save(bidding);
         return toResponseDTO(updatedBidding);
@@ -98,7 +95,6 @@ public class BiddingService {
         return toResponseDTO(updatedBidding);
     }
 
-    // Method to help in convert from Entity to DTO
     private BiddingResponseDTO toResponseDTO(Bidding bidding) {
         return new BiddingResponseDTO(
                 bidding.getIdBidding(),
@@ -107,6 +103,7 @@ public class BiddingService {
                 bidding.getProductBidding(),
                 bidding.getQuantity(),
                 bidding.getCategory(),
+                bidding.getMaxDesiredPrice(),
                 bidding.getRequestDate(),
                 bidding.getBiddingStatus(),
                 bidding.getUser().getIdUser(),

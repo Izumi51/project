@@ -82,11 +82,15 @@ public class MatchService {
 
         List<ProductVars> allProductVars = new ArrayList<>();
 
+        // Define o limite de preço máximo. Se for null, considera infinito (sem limite).
+        double maxAllowedPrice = bidding.getMaxDesiredPrice() != null
+                ? bidding.getMaxDesiredPrice().doubleValue()
+                : Double.POSITIVE_INFINITY;
+
         // 4. Modelagem Matemática
         for (int i = 0; i < matchedProducts.size(); i++) {
             Product product = matchedProducts.get(i);
 
-            // Ignora produtos sem estoque
             if (product.getAvailableQuantity() == null || product.getAvailableQuantity() <= 0) {
                 continue;
             }
@@ -94,70 +98,63 @@ public class MatchService {
             ProductVars pVars = new ProductVars();
             pVars.product = product;
 
-            // Define o custo logístico unitário. Se for null no BD, assume 0.
             double unitLogisticCost = product.getUnitLogisticCost() != null
                     ? product.getUnitLogisticCost().doubleValue()
                     : 0.0;
 
-            // Ordena os Tiers do produto (faixas de preço) por quantidade mínima
             pVars.sortedTiers = product.getPriceTiers().stream()
                     .sorted(Comparator.comparing(PriceTier::getMinQuantity))
                     .collect(Collectors.toList());
 
-            // Restrição: Apenas UMA faixa de preço pode ser ativada por produto
             MPConstraint singleTierConstraint = solver.makeConstraint(0, 1, "Single_Tier_Prod_" + i);
 
             for (int j = 0; j < pVars.sortedTiers.size(); j++) {
                 PriceTier tier = pVars.sortedTiers.get(j);
 
-                int minQty = tier.getMinQuantity();
+                // Custo real que o solver vai analisar: Preço do Produto + Frete Unitário
+                double costCoefficient = tier.getPricePerUnit().doubleValue() + unitLogisticCost;
 
-                // O limite máximo da faixa de preço atual é a quantidade mínima da próxima faixa - 1
+                // NOVA REGRA: Se o custo desta faixa ultrapassa o orçamento máximo por unidade, ignoramos esta opção
+                if (costCoefficient > maxAllowedPrice) {
+                    continue;
+                }
+
+                int minQty = tier.getMinQuantity();
                 int tierUpperLimit = (j < pVars.sortedTiers.size() - 1)
                         ? (pVars.sortedTiers.get(j + 1).getMinQuantity() - 1)
                         : demand;
 
-                // CRÍTICO: O limite máximo real de compra é o menor valor entre o limite da faixa e o estoque disponível
                 int maxQty = Math.min(tierUpperLimit, product.getAvailableQuantity());
 
-                // Se o estoque disponível for menor que a exigência mínima do Tier, este Tier não pode ser usado
                 if (maxQty < minQty) {
                     continue;
                 }
 
-                // Custo real que o solver vai analisar: Preço do Produto + Frete Unitário
-                double costCoefficient = tier.getPricePerUnit().doubleValue() + unitLogisticCost;
-
-                // Variável Y (Binária): 1 se vamos usar este Tier, 0 se não
                 MPVariable yVar = solver.makeBoolVar("y_prod_" + i + "_tier_" + j);
                 pVars.yVars.add(yVar);
                 singleTierConstraint.setCoefficient(yVar, 1);
 
-                // Variável X (Inteira): Quantidade comprada neste Tier
                 MPVariable xVar = solver.makeIntVar(0, maxQty, "x_prod_" + i + "_tier_" + j);
                 pVars.xVars.add(xVar);
 
-                demandConstraint.setCoefficient(xVar, 1); // Adiciona na restrição de demanda total
-                objective.setCoefficient(xVar, costCoefficient); // Adiciona na função de minimização de custo
+                demandConstraint.setCoefficient(xVar, 1);
+                objective.setCoefficient(xVar, costCoefficient);
 
-                // Restrições de Lógica do Tier:
-                // Se Y = 1, X deve ser >= minQty e <= maxQty
-                // Se Y = 0, X deve ser 0
-
-                // X - (minQty * Y) >= 0   =>   X >= minQty * Y
                 MPConstraint minConstraint = solver.makeConstraint(0, infinity, "Min_Limit_P" + i + "T" + j);
                 minConstraint.setCoefficient(xVar, 1);
                 minConstraint.setCoefficient(yVar, -minQty);
 
-                // X - (maxQty * Y) <= 0   =>   X <= maxQty * Y
                 MPConstraint maxConstraint = solver.makeConstraint(-infinity, 0, "Max_Limit_P" + i + "T" + j);
                 maxConstraint.setCoefficient(xVar, 1);
                 maxConstraint.setCoefficient(yVar, -maxQty);
             }
 
-            allProductVars.add(pVars);
+            // Só adiciona o produto à lista matemática se pelo menos UMA faixa de preço foi válida
+            if (!pVars.xVars.isEmpty()) {
+                allProductVars.add(pVars);
+            }
         }
-
+            
         // 5. Executa a resolução do problema
         MPSolver.ResultStatus resultStatus = solver.solve();
         List<MatchResponseDTO> results = new ArrayList<>();

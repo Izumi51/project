@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Table(name="bidding_request")
@@ -21,7 +20,6 @@ public class Bidding {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idBidding;
 
-    // User who created the product
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
     private User user;
@@ -41,10 +39,8 @@ public class Bidding {
     @Column
     private String category;
 
-    /*
-        Preço máximo desejado por unidade.
-        Usamos BigDecimal para precisão monetária, evitando erros de arredondamento.
-    */
+    @Column(nullable = true)
+    private BigDecimal maxDesiredPrice;
 
     @Column(nullable = false)
     private LocalDateTime requestDate;
@@ -52,20 +48,6 @@ public class Bidding {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BiddingStatus biddingStatus;
-
-    /**
-     * Relação com os produtos que o sistema encontrou como compatíveis (matches).
-     * Uma solicitação pode corresponder a vários produtos.
-     * Um produto pode ser a correspondência para várias solicitações diferentes.
-     * Esta relação é preenchida pelo seu sistema APÓS a busca ser executada.
-     */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "request_matched_products",
-            joinColumns = @JoinColumn(name = "request_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> matchedProducts;
 
     @PrePersist
     protected void onCreate() {
