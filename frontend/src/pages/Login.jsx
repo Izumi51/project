@@ -200,7 +200,7 @@ const Login = () => {
 					</div>
 
 					{/* Sign Up Link */}
-					{/* <p className="text-center text-sm text-gray-600">
+					<p className="text-center text-sm text-gray-600">
 						Não tem uma conta?{' '}
 						<Link 
 							to="/register" 
@@ -208,7 +208,7 @@ const Login = () => {
 						>
 							Cadastre-se
 						</Link>
-					</p> */}
+					</p> 
 
 				</form>
 			</div>

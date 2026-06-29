@@ -7,7 +7,8 @@ const DTO_CAMPOS_INICIAIS = {
 	description: '',
 	productBidding: '',
 	quantity: 0,
-	category: ''
+	category: '',
+	maxDesiredPrice: ''
 };
 
 // Possible statuses from BiddingStatus.java
@@ -46,7 +47,8 @@ const Bidding = () => {
 			description: bidding.description,
 			productBidding: bidding.productBidding,
 			quantity: bidding.quantity,
-			category: bidding.category
+			category: bidding.category,
+			maxDesiredPrice: bidding.maxDesiredPrice || ''
 		});
 		setApiError(null);
 		setIsModalOpen(true);
@@ -257,6 +259,18 @@ const Bidding = () => {
 											required
 											min="1"
 											className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+										/>
+									</div>
+									<div className="flex-1">
+										<label className="block text-sm font-medium text-gray-700">Preço Máximo (Teto)</label>
+										<input
+											type="number"
+											step="0.01"
+											name="maxDesiredPrice"
+											value={formData.maxDesiredPrice}
+											onChange={handleChange}
+											className="mt-1 block w-full px-3 py-2 border border-[#CBCBCB] rounded-md shadow-sm"
+											placeholder="Ex: 50.00"
 										/>
 									</div>
 								</div>

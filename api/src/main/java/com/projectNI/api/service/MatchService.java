@@ -154,7 +154,7 @@ public class MatchService {
                 allProductVars.add(pVars);
             }
         }
-            
+
         // 5. Executa a resolução do problema
         MPSolver.ResultStatus resultStatus = solver.solve();
         List<MatchResponseDTO> results = new ArrayList<>();

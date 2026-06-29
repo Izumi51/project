@@ -20,7 +20,7 @@ const NavBar = () => {
 			{/* 1. Tttle */}
 			<div className="p-5 border-b border-[#CBCBCB]">
 				<h1 className="text-2xl font-bold text-center text-gray-900">
-					ProjectNI
+					TCC
 				</h1>
 			</div>
 
