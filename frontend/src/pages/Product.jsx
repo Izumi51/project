@@ -8,14 +8,14 @@ const DTO_INITIAL_FIELDS = {
   category: '',
   idSupplier: '',
   description: '',
-  availableQuantity: 0,
-  unitLogisticCost: 0.00,
-  productStatus: 'SELLING',
-  priceTiers: [{ minQuantity: 1, pricePerUnit: 0.00 }]
+  availableQuantity: '',
+  unitLogisticCost: '',
+  productStatus: 'VENDENDO',
+  priceTiers: [{ minQuantity: 1, maxQuantity: 999999, pricePerUnit: 0.00 }]
 };
 
 // Status options from backend enum
-const STATUS_OPTIONS = ['SELLING', 'INACTIVE', 'NO_STOCK'];
+const STATUS_OPTIONS = ['VENDENDO', 'INATIVO', 'SEM_ESTOQUE'];
 
 // --- Helper Components ---
 
@@ -85,7 +85,7 @@ const TextAreaField = ({ label, name, value, onChange, rows = 3, ...props }) => 
 const PriceTierRow = ({ tier, index, onChange, onRemove, canRemove }) => (
 	<div className="flex items-end space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-md mb-2 shadow-sm">
 		<InputField
-			label="Quatidade Mínima"
+			label="Quantidade Mínima"
 			type="number"
 			name="minQuantity"
 			value={tier.minQuantity}
@@ -93,6 +93,16 @@ const PriceTierRow = ({ tier, index, onChange, onRemove, canRemove }) => (
 			required
 			min="1"
 			placeholder="ex.: 1"
+		/>
+		<InputField
+			label="Quantidade Máxima"
+			type="number"
+			name="maxQuantity"
+			value={tier.maxQuantity}
+			onChange={(e) => onChange(index, e)}
+			required
+			min="1"
+			placeholder="ex.: 99"
 		/>
 		<InputField
 			label="Preço por Unidade (R$)"
@@ -217,14 +227,16 @@ const Product = () => {
 	const handleTierChange = (index, e) => {
 		const { name, value } = e.target;
 		const newTiers = [...formData.priceTiers];
-		const numValue = name === 'minQuantity' ? parseInt(value, 10) || 0 : parseFloat(value) || 0.00;
+		const numValue = (name === 'minQuantity' || name === 'maxQuantity')
+			? parseInt(value, 10) || 0
+			: parseFloat(value) || 0.00;
 		newTiers[index] = { ...newTiers[index], [name]: numValue };
 		setFormData(prev => ({ ...prev, priceTiers: newTiers }));
 	};
 
 	const addTier = () => {
 		const maxQty = Math.max(0, ...formData.priceTiers.map(t => t.minQuantity));
-		const newTier = { minQuantity: maxQty + 1, pricePerUnit: 0.00 };
+		const newTier = { minQuantity: maxQty + 1, maxQuantity: 999999, pricePerUnit: 0.00 };
 		const updatedTiers = [...formData.priceTiers, newTier].sort((a, b) => a.minQuantity - b.minQuantity);
 		setFormData(prev => ({ ...prev, priceTiers: updatedTiers }));
 	};
@@ -247,6 +259,7 @@ const Product = () => {
   if (!formData.idSupplier) return setApiError('Fornecedor é Obrigatório');
   if (!formData.priceTiers || formData.priceTiers.length === 0) return setApiError('Pelo Menos um Preço é Obrigatório.');
   if (formData.priceTiers.some(t => t.minQuantity < 1)) return setApiError('A Quantidade Mínima é 1 ou mais.');
+  if (formData.priceTiers.some(t => t.maxQuantity < t.minQuantity)) return setApiError('A Quantidade Máxima deve ser maior ou igual à Quantidade Mínima.');
   
   const quantities = formData.priceTiers.map(t => t.minQuantity);
   if (new Set(quantities).size !== quantities.length) return setApiError('Quantidades Mínimas para os Preços devem ser Únicas.');

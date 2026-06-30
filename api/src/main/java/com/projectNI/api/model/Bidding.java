@@ -52,6 +52,6 @@ public class Bidding {
     @PrePersist
     protected void onCreate() {
         this.requestDate = LocalDateTime.now();
-        this.biddingStatus = BiddingStatus.STARTING;
+        this.biddingStatus = BiddingStatus.ABERTO;
     }
 }

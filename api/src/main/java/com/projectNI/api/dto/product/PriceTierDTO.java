@@ -5,5 +5,6 @@ import java.math.BigDecimal;
 // We use a record for the DTO. We don't need an ID here.
 public record PriceTierDTO(
         Integer minQuantity,
+        Integer maxQuantity,
         BigDecimal pricePerUnit
 ) {}

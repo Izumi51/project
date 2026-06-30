@@ -12,7 +12,7 @@ const DTO_CAMPOS_INICIAIS = {
 };
 
 // Possible statuses from BiddingStatus.java
-const STATUS_OPTIONS = ['ONGOING', 'FINISHED', 'STARTING', 'IN_ANALYSIS', 'AWARDED'];
+const STATUS_OPTIONS = ['ABERTO', 'FECHADO'];
 
 const Bidding = () => {
 	const {

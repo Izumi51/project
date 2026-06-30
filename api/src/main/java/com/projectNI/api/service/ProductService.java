@@ -6,6 +6,7 @@ import com.projectNI.api.dto.product.ProductStatusUpdateDTO;
 import com.projectNI.api.dto.product.PriceTierDTO;
 import com.projectNI.api.model.PriceTier;
 import com.projectNI.api.model.Product;
+import com.projectNI.api.model.ProductStatus;
 import com.projectNI.api.model.Supplier;
 import com.projectNI.api.repository.ProductRepository;
 import com.projectNI.api.repository.SupplierRepository;
@@ -44,7 +45,7 @@ public class ProductService {
         product.setUnitLogisticCost(dto.unitLogisticCost());
 
         product.setSupplier(supplier); // Associates the Supplier
-        product.setProductStatus(com.projectNI.api.model.ProductStatus.SELLING); // Define um status padrão
+        product.setProductStatus(ProductStatus.VENDENDO); // Define um status padrão
 
         if (dto.priceTiers() != null) {
             List<PriceTier> tiers = dto.priceTiers().stream()
@@ -52,6 +53,7 @@ public class ProductService {
                         PriceTier tier = new PriceTier();
                         tier.setProduct(product); // Link the tier to the product
                         tier.setMinQuantity(tierDto.minQuantity());
+                        tier.setMaxQuantity(tierDto.maxQuantity());
                         tier.setPricePerUnit(tierDto.pricePerUnit());
                         return tier;
                     })
@@ -108,6 +110,7 @@ public class ProductService {
                         PriceTier tier = new PriceTier();
                         tier.setProduct(product);
                         tier.setMinQuantity(tierDto.minQuantity());
+                        tier.setMaxQuantity(tierDto.maxQuantity());
                         tier.setPricePerUnit(tierDto.pricePerUnit());
                         return tier;
                     })
@@ -141,7 +144,7 @@ public class ProductService {
     // Method to help in convert from Entity to DTO
     private ProductResponseDTO toResponseDTO(Product product) {
         List<PriceTierDTO> tierDTOs = product.getPriceTiers().stream()
-                .map(tier -> new PriceTierDTO(tier.getMinQuantity(), tier.getPricePerUnit()))
+                .map(tier -> new PriceTierDTO(tier.getMinQuantity(), tier.getMaxQuantity(), tier.getPricePerUnit()))
                 .collect(Collectors.toList());
 
         return new ProductResponseDTO(

@@ -35,7 +35,7 @@ public class SupplierService {
         supplier.setContactName(dto.contactName());
         supplier.setPhone(dto.phone());
         supplier.setEmail(dto.email());
-        supplier.setSupplierStatus(dto.supplierStatus() != null ? dto.supplierStatus() : SupplierStatus.ACTIVE); // Default status
+        supplier.setSupplierStatus(dto.supplierStatus() != null ? dto.supplierStatus() : SupplierStatus.ATIVO); // Default status
         supplier.setFixedCost(dto.fixedCost() != null ? dto.fixedCost() : java.math.BigDecimal.ZERO);
 
         Supplier savedSupplier = supplierRepository.save(supplier);

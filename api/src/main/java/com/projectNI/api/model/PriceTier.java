@@ -27,5 +27,8 @@ public class PriceTier {
     private Integer minQuantity; // Ex: 1, 100, 500
 
     @Column(nullable = false)
+    private Integer maxQuantity; // Ex: 99, 499, 9999
+
+    @Column(nullable = false)
     private BigDecimal pricePerUnit; // Price for this tier
 }

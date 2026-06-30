@@ -9,12 +9,12 @@ const DTO_INITIAL_FIELDS = {
   contactName: '',
   phone: '',
   email: '',
-  supplierStatus: 'ACTIVE',
+  supplierStatus: 'ATIVO',
   fixedCost: '' 
 };
 
 // Statuses from SupplierStatus.java
-const STATUS_OPTIONS = ['Ativo', 'Inativo', 'Sem Produtos'];
+const STATUS_OPTIONS = ['ATIVO', 'INATIVO', 'SEM_PRODUTO'];
 
 const Supplier = () => {
 	// Consume the hook

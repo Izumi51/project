@@ -55,7 +55,7 @@ public class MatchService {
         // 2. Busca produtos elegíveis
         List<Product> matchedProducts = productRepository.findByCategoryAndProductStatusAndNameContainingIgnoreCase(
                 bidding.getCategory(),
-                ProductStatus.SELLING,
+                ProductStatus.VENDENDO,
                 bidding.getProductBidding()
         );
 
@@ -129,9 +129,6 @@ public class MatchService {
             pVars.sortedTiers = product.getPriceTiers().stream()
                     .sorted(Comparator.comparing(PriceTier::getMinQuantity))
                     .collect(Collectors.toList());
-
-            // Garante que, para este produto, no máximo uma faixa de preço (tier) seja
-            // utilizada — modela a política de desconto por volume.
             MPConstraint singleTierConstraint = solver.makeConstraint(0, 1, "Single_Tier_Prod_" + i);
 
             int productCapacity = 0;
@@ -148,11 +145,7 @@ public class MatchService {
                 }
 
                 int minQty = tier.getMinQuantity();
-                int tierUpperLimit = (j < pVars.sortedTiers.size() - 1)
-                        ? (pVars.sortedTiers.get(j + 1).getMinQuantity() - 1)
-                        : demand;
-
-                int maxQty = Math.min(tierUpperLimit, product.getAvailableQuantity());
+                int maxQty = Math.min(tier.getMaxQuantity(), product.getAvailableQuantity());
 
                 if (maxQty < minQty) {
                     continue;
