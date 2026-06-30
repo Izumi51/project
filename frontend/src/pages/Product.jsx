@@ -392,7 +392,7 @@ const Product = () => {
 						{/* Modal Header */}
 						<div className="flex justify-between items-center pb-3 border-b border-[#EEEEEE]">
 							<h2 className="text-xl font-semibold text-gray-800">
-								{selectedProduct ? 'Edit Product' : 'Create New Product'}
+								{selectedProduct ? 'Editar Produto' : 'Criar novo Produto'}
 							</h2>
 							<button onClick={closeModal} className="text-gray-400 hover:text-gray-600 focus:outline-none">
 								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

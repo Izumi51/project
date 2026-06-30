@@ -24,7 +24,7 @@ Este projeto é dividido em duas partes principais:
 
 ### Backend (`api/`)
 
-* **Java 25 & Spring Boot**
+* **Java 21 & Spring Boot**
 * **Google OR-Tools** (Motor de otimização MILP) 
 * **Spring Data JPA** & **PostgreSQL**
 * **Maven** (Gerenciamento de dependências)
