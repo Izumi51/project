@@ -75,7 +75,7 @@ const Match = () => {
                       className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 p-5"
                       onClick={() => handleCardClick(match.idProduct, match.idSupplier)}
                     >
-                      <h3 className="text-xl font-bold text-gray-900">{match.name}</h3>
+                      <h3 className="text-xl font-bold text-gray-900">{match.productName}</h3>
                       <p className="text-sm text-gray-500">Fornecedor: {match.companyName}</p>
                       <div className="mt-4">
                         <p>Qtd: {match.quantityBought}</p>

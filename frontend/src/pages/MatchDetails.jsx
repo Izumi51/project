@@ -62,7 +62,7 @@ const MatchDetails = () => {
                         <tbody className="divide-y divide-gray-100">
                             {matchData.allocations.map((item, index) => (
                                 <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium">{item.name}</td>
+                                    <td className="px-6 py-4 font-medium">{item.productName}</td>
                                     <td className="px-6 py-4">{item.companyName}</td>
                                     <td className="px-6 py-4">{item.quantityBought}</td>
                                     <td className="px-6 py-4 font-semibold">{formatCurrency(item.finalTotalCost)}</td>
